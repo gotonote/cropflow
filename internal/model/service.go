@@ -129,6 +129,22 @@ func (s *Service) initDefaultModels() {
 		Temperature: 0.7,
 		MaxTokens:   4096,
 	}
+	s.models["glm-4-plus"] = &ModelConfig{
+		Provider:    ProviderGLM,
+		ModelName:   "glm-4-plus",
+		APIKey:      os.Getenv("ZHIPU_API_KEY"),
+		BaseURL:     "https://open.bigmodel.cn/api/paas/v4",
+		Temperature: 0.7,
+		MaxTokens:   4096,
+	}
+	s.models["glm-4-flash"] = &ModelConfig{
+		Provider:    ProviderGLM,
+		ModelName:   "glm-4-flash",
+		APIKey:      os.Getenv("ZHIPU_API_KEY"),
+		BaseURL:     "https://open.bigmodel.cn/api/paas/v4",
+		Temperature: 0.7,
+		MaxTokens:   4096,
+	}
 	s.models["glm-3-turbo"] = &ModelConfig{
 		Provider:    ProviderGLM,
 		ModelName:   "glm-3-turbo",

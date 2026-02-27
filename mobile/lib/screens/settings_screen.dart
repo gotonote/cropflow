@@ -25,6 +25,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     {'id': 'claude-3-opus', 'name': 'Claude 3 Opus', 'provider': 'Anthropic', 'keyEnv': 'ANTHROPIC_API_KEY', 'keyName': 'anthropic_api_key'},
     {'id': 'claude-3-sonnet', 'name': 'Claude 3 Sonnet', 'provider': 'Anthropic', 'keyEnv': 'ANTHROPIC_API_KEY', 'keyName': 'anthropic_api_key'},
     {'id': 'glm-4', 'name': 'GLM-4', 'provider': 'Zhipu (智谱)', 'keyEnv': 'ZHIPU_API_KEY', 'keyName': 'zhipu_api_key'},
+    {'id': 'glm-4-plus', 'name': 'GLM-4 Plus', 'provider': 'Zhipu (智谱)', 'keyEnv': 'ZHIPU_API_KEY', 'keyName': 'zhipu_api_key'},
+    {'id': 'glm-4-flash', 'name': 'GLM-4 Flash', 'provider': 'Zhipu (智谱)', 'keyEnv': 'ZHIPU_API_KEY', 'keyName': 'zhipu_api_key'},
     {'id': 'glm-3-turbo', 'name': 'GLM-3 Turbo', 'provider': 'Zhipu (智谱)', 'keyEnv': 'ZHIPU_API_KEY', 'keyName': 'zhipu_api_key'},
     {'id': 'moonshot-v1-8k-chat', 'name': 'Kimi', 'provider': 'Moonshot (月之暗面)', 'keyEnv': 'KIMI_API_KEY', 'keyName': 'kimi_api_key'},
     {'id': 'moonshot-v1-32k-chat', 'name': 'Kimi 32K', 'provider': 'Moonshot (月之暗面)', 'keyEnv': 'KIMI_API_KEY', 'keyName': 'kimi_api_key'},
