@@ -23,6 +23,93 @@ CorpFlow is a **multi-agent collaboration platform** that enables you to:
 
 ---
 
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                                 CorpFlow Architecture                            │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+                                    ┌─────────────┐
+                                    │   Users     │
+                                    │ (Mobile/    │
+                                    │  Web/Channel)│
+                                    └──────┬──────┘
+                                           │
+                    ┌──────────────────────┼──────────────────────┐
+                    │                      │                      │
+                    ▼                      ▼                      ▼
+           ┌────────────────┐    ┌────────────────┐    ┌────────────────┐
+           │   Flutter App  │    │  React Web    │    │    Channels   │
+           │   (Mobile)     │    │   (Frontend)  │    │ (Feishu/WeChat│
+           └───────┬────────┘    └───────┬────────┘    │ /Telegram/Disc)│
+                   │                     │             └───────┬────────┘
+                   │                     │                     │
+                   └─────────────────────┼─────────────────────┘
+                                         │
+                                         ▼
+                              ┌────────────────────┐
+                              │    API Gateway      │
+                              │   (Go Gin Server)  │
+                              └──────────┬─────────┘
+                                         │
+         ┌───────────────────────────────┼───────────────────────────────┐
+         │                               │                               │
+         ▼                               ▼                               ▼
+┌─────────────────┐          ┌─────────────────┐          ┌─────────────────┐
+│   Agent Service │          │   Flow Engine   │          │  Channel Service│
+│                 │          │                 │          │                 │
+│ • Create Agents │          │ • Visual Editor  │          │ • Feishu Adapter│
+│ • Execute Agent │          │ • Node Registry  │          │ • WeChat Adapter│
+│ • Memory Manager│          │ • Execution Log │          │ • Telegram Bot  │
+│ • Tool Executor │          │ • Template Lib   │          │ • Discord Bot   │
+└────────┬────────┘          └────────┬────────┘          └────────┬────────┘
+         │                           │                           │
+         └───────────────────────────┼───────────────────────────┘
+                                     │
+                                     ▼
+                         ┌───────────────────────┐
+                         │    Model Service      │
+                         │  (Multi-Model LLM)   │
+                         └───────────┬───────────┘
+                                     │
+    ┌────────────────────────────────┼────────────────────────────────┐
+    │                                │                                │
+    ▼                                ▼                                ▼
+┌─────────────┐              ┌─────────────┐              ┌─────────────┐
+│   OpenAI    │              │   Zhipu     │              │   Anthropic │
+│  (GPT-4)    │              │  (GLM-4)    │              │  (Claude-3) │
+└─────────────┘              └─────────────┘              └─────────────┘
+         │                                │                                │
+    ┌─────────────┐              ┌─────────────┐              ┌─────────────┐
+    │   Kimi     │              │   Qwen      │              │  DeepSeek   │
+    │ (Moonshot) │              │ (Alibaba)   │              │             │
+    └─────────────┘              └─────────────┘              └─────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              Data Layer                                          │
+├──────────────────┬──────────────────┬──────────────────┬─────────────────────┤
+│    PostgreSQL    │      Redis       │    File Store    │    In-Memory        │
+│  (Agents/Flows/  │  (Cache/Session) │  (Templates/     │   (Execution        │
+│   Messages)      │                  │   Exports)       │    Logs)            │
+└──────────────────┴──────────────────┴──────────────────┴─────────────────────┘
+```
+
+### Component Description
+
+| Component | Description |
+|-----------|-------------|
+| **Users** | End users interacting via Mobile App, Web UI, or Channels |
+| **API Gateway** | Go Gin server routing requests to services |
+| **Agent Service** | Manages AI agents, execution, memory, and tools |
+| **Flow Engine** | Visual workflow execution with node types |
+| **Channel Service** | Multi-channel adapters (Feishu/WeChat/Telegram/Discord) |
+| **Model Service** | Unified interface for 7+ AI providers |
+| **Data Layer** | PostgreSQL, Redis, File storage |
+
+---
+
 ## Why CorpFlow? (vs OpenCode, OpenClaw, Claude Code, Super Powers)
 
 | Feature | CorpFlow | OpenCode | OpenClaw | Claude Code | Super Powers |
