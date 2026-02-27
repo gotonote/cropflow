@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/sashabaranov/go-openai"
+	"corpflow/internal/memory"
 )
 
 // Service 智能体服务
@@ -14,10 +16,11 @@ type Service struct {
 	openaiClient *openai.Client
 	anthropicKey string
 	defaultModel string
+	memorySvc    *memory.Service
 }
 
 // NewService 创建智能体服务
-func NewService() *Service {
+func NewService(memSvc *memory.Service) *Service {
 	openaiKey := os.Getenv("OPENAI_API_KEY")
 	var client *openai.Client
 	if openaiKey != "" {
@@ -28,6 +31,7 @@ func NewService() *Service {
 		openaiClient: client,
 		anthropicKey: os.Getenv("ANTHROPIC_API_KEY"),
 		defaultModel: "gpt-4",
+		memorySvc:    memSvc,
 	}
 }
 
@@ -37,13 +41,114 @@ func (s *Service) Process(ctx context.Context, input, userID string) (string, er
 	return s.CallLLM(ctx, s.defaultModel, input)
 }
 
-// ProcessWithAgent 使用指定智能体处理
+// ProcessWithAgent 使用指定智能体处理 (带记忆)
 func (s *Service) ProcessWithAgent(ctx context.Context, agentID, input, userID string) (string, error) {
-	// TODO: 从DB获取智能体配置
+	// 获取智能体配置
+	// TODO: 从DB获取
+	
+	// 获取相关记忆
+	contextInfo := s.GetContextForAgent(agentID, input)
+	
 	// 构建系统prompt
 	systemPrompt := "你是一个AI助手，请帮助用户解决问题。"
+	if contextInfo != "" {
+		systemPrompt += "\n\n相关背景信息:\n" + contextInfo
+	}
 
-	return s.callModel(ctx, s.defaultModel, systemPrompt, input)
+	response := s.callModel(ctx, s.defaultModel, systemPrompt, input)
+	
+	// 记录到记忆
+	if s.memorySvc != nil {
+		_ = s.memorySvc.AddActionMemory(agentID, nil, input, response)
+	}
+	
+	return response, nil
+}
+
+// GetContextForAgent 获取智能体的上下文记忆
+func (s *Service) GetContextForAgent(agentID uint, currentInput string) string {
+	if s.memorySvc == nil {
+		return ""
+	}
+
+	var context strings.Builder
+
+	// 1. 获取自己的记忆
+	memories, _ := s.memorySvc.GetMemories(agentID, 10)
+	if len(memories) > 0 {
+		context.WriteString("【我的历史行为】\n")
+		for _, mem := range memories {
+			context.WriteString(fmt.Sprintf("- %s\n", mem.Content))
+		}
+	}
+
+	// 2. 获取下属的记忆 (如果我是上级)
+	subMemories, _ := s.memorySvc.GetSubordinateMemories(agentID)
+	if len(subMemories) > 0 {
+		context.WriteString("\n【下属的行为】\n")
+		for _, mem := range subMemories {
+			context.WriteString(fmt.Sprintf("- %s\n", mem.Content))
+		}
+	}
+
+	// 3. 获取相关知识
+	knowledge, _ := s.memorySvc.SearchKnowledge(agentID, currentInput)
+	if len(knowledge) > 0 {
+		context.WriteString("\n【相关知识】\n")
+		for _, k := range knowledge {
+			context.WriteString(fmt.Sprintf("- %s: %s\n", k.Title, k.Content))
+		}
+	}
+
+	return context.String()
+}
+
+// SetParent 设置上级
+func (s *Service) SetParent(agentID, parentID uint) error {
+	if s.memorySvc == nil {
+		return nil
+	}
+	return s.memorySvc.SetRelationship(parentID, agentID, "manage")
+}
+
+// AddSubordinate 添加下属
+func (s *Service) AddSubordinate(agentID, subordinateID uint) error {
+	if s.memorySvc == nil {
+		return nil
+	}
+	return s.memorySvc.SetRelationship(agentID, subordinateID, "manage")
+}
+
+// GetSubordinates 获取下属列表
+func (s *Service) GetSubordinates(agentID uint) ([]uint, error) {
+	if s.memorySvc == nil {
+		return []uint{}, nil
+	}
+	return s.memorySvc.GetSubordinateIDs(agentID)
+}
+
+// GenerateReport 生成工作报告
+func (s *Service) GenerateReport(agentID uint, period string) (*memory.Report, error) {
+	if s.memorySvc == nil {
+		return nil, fmt.Errorf("memory service not initialized")
+	}
+	return s.memorySvc.GenerateReport(agentID, period)
+}
+
+// RecordDecision 记录决策
+func (s *Service) RecordDecision(agentID uint, decision, reason string) error {
+	if s.memorySvc == nil {
+		return nil
+	}
+	return s.memorySvc.AddDecisionMemory(agentID, nil, decision, reason)
+}
+
+// RecordResult 记录执行结果
+func (s *Service) RecordResult(agentID uint, task string, success bool, details string) error {
+	if s.memorySvc == nil {
+		return nil
+	}
+	return s.memorySvc.AddResultMemory(agentID, nil, task, success, details)
 }
 
 // CallLLM 调用大模型
