@@ -4,23 +4,30 @@
 
 | File | Description | Use Case |
 |------|-------------|----------|
-| `logo.svg` | Vector logo | Web, Print |
-| `logo-full.svg` | Full version | High resolution |
+| `logo.svg` | Fox logo vector | Web, Print |
+| `logo-full.svg` | High resolution | Mobile apps |
 | `logo.png` | Raster version | Mobile apps |
 
 ## Logo Design
 
 ### Concept
-- **CF** letters flow design (CorpFlow)
-- Gradient purple-blue (#667eea → #764ba2)
-- White flow lines
-- AI sparkle/star element
+- **Fox** - Smart, clever, intelligent animal
+- Orange gradient (#FF6B35 → #F7931E)
+- White face with expressive eyes
+- AI golden crown/sparkle on top
 - Rounded square background
 
+### Why Fox?
+- Fox = Intelligence & Cleverness
+- Distinctive silhouette
+- Memorable & recognizable
+- Works well in small sizes
+
 ### Colors
-- Primary: #667eea (Purple-Blue)
-- Secondary: #764ba2 (Purple)
-- Accent: #f093fb (Pink)
+- Primary: #FF6B35 (Orange)
+- Secondary: #F7931E (Golden Orange)
+- Accent: #FFD700 (Gold)
+- Dark: #1a1a2e (Eye color)
 - White: #FFFFFF
 
 ### Variations

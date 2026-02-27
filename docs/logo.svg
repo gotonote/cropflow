@@ -1,39 +1,57 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
     <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
-    </linearGradient>
-    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F7931E;stop-opacity:1" />
     </linearGradient>
   </defs>
   
   <!-- Background Circle -->
   <circle cx="256" cy="256" r="240" fill="url(#grad1)"/>
   
-  <!-- Flow Lines -->
-  <g fill="none" stroke="white" stroke-width="16" stroke-linecap="round" opacity="0.9">
-    <!-- C letter flow -->
-    <path d="M 340 180 A 100 100 0 1 0 340 332"/>
-    <circle cx="340" cy="180" r="12" fill="white"/>
-    <circle cx="340" cy="332" r="12" fill="white"/>
+  <!-- Fox Face -->
+  <g fill="#FFFFFF">
+    <!-- Head -->
+    <path d="M256 120 C180 120 130 180 130 260 C130 340 180 400 256 400 C332 400 382 340 382 260 C382 180 332 120 256 120Z"/>
     
-    <!-- F letter flow -->
-    <path d="M 172 160 L 172 352"/>
-    <path d="M 172 200 L 250 200"/>
-    <path d="M 172 260 L 220 260"/>
-    <circle cx="172" cy="160" r="12" fill="white"/>
-    <circle cx="250" cy="200" r="10" fill="url(#grad2)"/>
-    <circle cx="220" cy="260" r="10" fill="url(#grad2)"/>
+    <!-- Ears -->
+    <path d="M170 140 L150 60 L210 120Z"/>
+    <path d="M342 140 L362 60 L302 120Z"/>
     
-    <!-- Connection dots -->
-    <circle cx="256" cy="256" r="20" fill="white"/>
+    <!-- Inner Ears -->
+    <path d="M180 130 L168 80 L210 115Z" fill="#FF6B35"/>
+    <path d="M332 130 L344 80 L302 115Z" fill="#FF6B35"/>
+    
+    <!-- Eyes -->
+    <ellipse cx="200" cy="240" rx="28" ry="35"/>
+    <ellipse cx="312" cy="240" rx="28" ry="35"/>
+    
+    <!-- Pupils -->
+    <circle cx="205" cy="245" r="16" fill="#1a1a2e"/>
+    <circle cx="317" cy="245" r="16" fill="#1a1a2e"/>
+    
+    <!-- Eye Shine -->
+    <circle cx="212" cy="238" r="6" fill="white"/>
+    <circle cx="324" cy="238" r="6" fill="white"/>
+    
+    <!-- Nose -->
+    <ellipse cx="256" cy="310" rx="22" ry="18"/>
+    
+    <!-- Mouth -->
+    <path d="M256 328 L256 350" stroke="#FF6B35" stroke-width="6" fill="none"/>
+    <path d="M230 345 Q256 370 282 345" stroke="#FF6B35" stroke-width="6" fill="none" stroke-linecap="round"/>
+    
+    <!-- Whiskers -->
+    <g stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.6">
+      <line x1="160" y1="300" x2="100" y2="290"/>
+      <line x1="160" y1="320" x2="95" y2="325"/>
+      <line x1="352" y1="300" x2="412" y2="290"/>
+      <line x1="352" y1="320" x2="417" y2="325"/>
+    </g>
   </g>
   
-  <!-- AI Sparkle -->
-  <g fill="white" opacity="0.8">
-    <polygon points="256,80 263,100 283,100 268,112 274,132 256,120 238,132 244,112 229,100 249,100"/>
+  <!-- AI Crown/Sparkle -->
+  <g fill="#FFD700">
+    <polygon points="256,60 263,85 290,85 269,102 277,128 256,112 235,128 243,102 222,85 249,85"/>
   </g>
 </svg>
