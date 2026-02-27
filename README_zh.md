@@ -26,80 +26,101 @@ CorpFlow 是一个**多智能体协作平台**，支持：
 ## 架构图
 
 ```mermaid
-flowchart TB
-    subgraph Users["🎯 用户层"]
-        direction LR
-        A1[📱 移动端]
-        A2[🌐 网页端]
-        A3[💬 渠道]
-    end
-    
-    subgraph Gateway["⚡ API 网关 (Go Gin)"]
-        G[请求路由]
-    end
-    
-    subgraph Services["🛠️ 服务层"]
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#667EEA', 'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#F3E8FF'}}}%%
+flowchart LR
+    subgraph INPUT["🔵 输入层 (用户)"]
         direction TB
-        B1[🤖 智能体服务]
-        B2[🔀 流程引擎]
-        B3[📡 渠道服务]
-        B4[🔧 工具服务]
-        B5[📋 日志服务]
-        B6[🧠 记忆服务]
+        I1[📱 移动端]
+        I2[🌐 网页端]
+        I3[💬 渠道]
+        I3 --> I1
+        I3 --> I2
     end
     
-    subgraph Model["🧠 模型服务 (多提供商)"]
-        direction LR
-        M1["<font color='#10B981'>OpenAI<br/>GPT-4</font>"]
-        M2["<font color='#667EEA'>智谱<br/>GLM-4</font>"]
-        M3["<font color='#F59E0B'>Anthropic<br/>Claude-3</font>"]
-        M4["<font color='#EC4899'>Kimi<br/>月之暗面</font>"]
-        M5["<font color='#8B5CF6'>Qwen<br/>阿里云</font>"]
-        M6["<font color='#EF4444'>DeepSeek<br/>DeepSeek</font>"]
+    subgraph GATEWAY["🟡 网关层"]
+        GW[⚡ API 网关<br/>Go Gin 服务]
     end
     
-    subgraph Data["💾 数据层"]
-        direction LR
-        D1[PostgreSQL]
-        D2[Redis]
-        D3[文件存储]
+    subgraph CORE["🟢 核心服务层"]
+        direction TB
+        S1[🤖 智能体服务]
+        S2[🔀 流程引擎]
+        S3[📡 渠道服务]
+        S4[🔧 工具服务]
+        S5[📋 日志服务]
+        S6[🧠 记忆服务]
+        S7[📊 模板服务]
     end
     
-    Users --> G
-    G --> B1
-    G --> B2
-    G --> B3
+    subgraph MODEL["🟣 模型层 (7+ 提供商)"]
+        direction TB
+        M1("<span style='color:#10B981'>●</span> OpenAI GPT-4")
+        M2("<span style='color:#667EEA'>●</span> 智谱 GLM-4")
+        M3("<span style='color:#F59E0B'>●</span> Anthropic Claude")
+        M4("<span style='color:#EC4899'>●</span> Kimi 月之暗面")
+        M5("<span style='color:#8B5CF6'>●</span> Qwen 阿里云")
+        M6("<span style='color:#EF4444'>●</span> DeepSeek")
+        M7("<span style='color:#14B8A6'>●</span> MiniMax")
+    end
     
-    B1 --> B4
-    B1 --> B6
-    B2 --> B5
-    B2 --> B1
-    B3 --> B1
+    subgraph OUTPUT["🔴 输出层"]
+        direction TB
+        O1[💬 回复]
+        O2[📊 日志]
+        O3[📤 导出]
+    end
     
-    B1 -.-> Model
-    B4 -.-> Model
+    subgraph DATA["⚫ 数据层"]
+        direction TB
+        D1[🗄️ PostgreSQL]
+        D2[⚡ Redis 缓存]
+        D3[📁 文件存储]
+    end
     
-    B1 --> D1
-    B2 --> D1
-    B5 --> D2
-    B6 --> D1
+    INPUT --> GW
+    GW --> CORE
+    CORE --> MODEL
+    CORE --> DATA
+    MODEL --> OUTPUT
     
-    style Users fill:#E0F2FE,stroke:#0284C7,stroke-width:2px
-    style Gateway fill:#FEF3C7,stroke:#D97706,stroke-width:2px
-    style Services fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
-    style Model fill:#F3E8FF,stroke:#9333EA,stroke-width:2px
-    style Data fill:#F1F5F9,stroke:#475569,stroke-width:2px
+    %% RGB 颜色样式
+    classDef input fill:#DBEAFE,stroke:#2563EB,stroke-width:3px,color:#1E40AF;
+    classDef gateway fill:#FEF9C3,stroke:#CA8A04,stroke-width:3px,color:#854D0E;
+    classDef core fill:#DCFCE7,stroke:#16A34A,stroke-width:3px,color:#166534;
+    classDef model fill:#F3E8FF,stroke:#9333EA,stroke-width:3px,color:#6B21A8;
+    classDef output fill:#FEE2E2,stroke:#DC2626,stroke-width:3px,color:#991B1B;
+    classDef data fill:#F1F5F9,stroke:#475569,stroke-width:3px,color:#1E293B;
+    
+    class I1,I2,I3,INPUT input;
+    class GW,GATEWAY gateway;
+    class S1,S2,S3,S4,S5,S6,S7,CORE core;
+    class M1,M2,M3,M4,M5,M6,M7,MODEL model;
+    class O1,O2,O3,OUTPUT output;
+    class D1,D2,D3,DATA data;
 ```
 
-### 组件说明
+### 颜色说明 (RGB 主题)
 
-| 组件 | 颜色 | 描述 |
-|------|------|------|
-| **用户层** | 🔵 蓝色 | 移动端/Web/渠道用户 |
-| **API 网关** | 🟡 黄色 | Go Gin 请求路由 |
-| **服务层** | 🟢 绿色 | 核心业务逻辑 |
-| **模型服务** | 🟣 紫色 | 7+ AI 提供商 |
-| **数据层** | ⚫ 灰色 | PostgreSQL/Redis/文件 |
+| 层级 | 颜色 | Hex | 描述 |
+|------|------|-----|------|
+| 🔵 **输入层** | 蓝色 | `#2563EB` | 用户交互 |
+| 🟡 **网关层** | 黄色 | `#CA8A04` | 请求路由 |
+| 🟢 **核心服务** | 绿色 | `#16A34A` | 业务逻辑 |
+| 🟣 **模型层** | 紫色 | `#9333EA` | AI 提供商 |
+| 🔴 **输出层** | 红色 | `#DC2626` | 响应/结果 |
+| ⚫ **数据层** | 灰色 | `#475569` | 存储/缓存 |
+
+### 数据流向
+
+```
+用户输入 → API 网关 → 核心服务 → AI 模型 → 响应
+     │              │            │           │
+     └──────────────┴────────────┴───────────┘
+                    │
+                    ▼
+              数据层
+              (存储与缓存)
+```
 
 ---
 

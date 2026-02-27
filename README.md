@@ -26,80 +26,101 @@ CorpFlow is a **multi-agent collaboration platform** that enables you to:
 ## Architecture
 
 ```mermaid
-flowchart TB
-    subgraph Users["🎯 Users Layer"]
-        direction LR
-        A1[📱 Mobile App]
-        A2[🌐 Web UI]
-        A3[💬 Channels]
-    end
-    
-    subgraph Gateway["⚡ API Gateway (Go Gin)"]
-        G[Request Router]
-    end
-    
-    subgraph Services["🛠️ Services Layer"]
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#667EEA', 'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#F3E8FF'}}}%%
+flowchart LR
+    subgraph INPUT["🔵 INPUT LAYER (Users)"]
         direction TB
-        B1[🤖 Agent Service]
-        B2[🔀 Flow Engine]
-        B3[📡 Channel Service]
-        B4[🔧 Tools Service]
-        B5[📋 Logs Service]
-        B6[🧠 Memory Service]
+        I1[📱 Mobile App]
+        I2[🌐 Web Frontend]
+        I3[💬 Channels]
+        I3 --> I1
+        I3 --> I2
     end
     
-    subgraph Model["🧠 Model Service (Multi-Provider)"]
-        direction LR
-        M1["<font color='#10B981'>OpenAI<br/>GPT-4</font>"]
-        M2["<font color='#667EEA'>Zhipu<br/>GLM-4</font>"]
-        M3["<font color='#F59E0B'>Anthropic<br/>Claude-3</font>"]
-        M4["<font color='#EC4899'>Kimi<br/>Moonshot</font>"]
-        M5["<font color='#8B5CF6'>Qwen<br/>Alibaba</font>"]
-        M6["<font color='#EF4444'>DeepSeek<br/>DeepSeek</font>"]
+    subgraph GATEWAY["🟡 GATEWAY LAYER"]
+        GW[⚡ API Gateway<br/>Go Gin Server]
     end
     
-    subgraph Data["💾 Data Layer"]
-        direction LR
-        D1[PostgreSQL]
-        D2[Redis]
-        D3[File Store]
+    subgraph CORE["🟢 CORE SERVICES"]
+        direction TB
+        S1[🤖 Agent Service]
+        S2[🔀 Flow Engine]
+        S3[📡 Channel Service]
+        S4[🔧 Tools Service]
+        S5[📋 Logs Service]
+        S6[🧠 Memory Service]
+        S7[📊 Template Service]
     end
     
-    Users --> G
-    G --> B1
-    G --> B2
-    G --> B3
+    subgraph MODEL["🟣 MODEL LAYER (7+ Providers)"]
+        direction TB
+        M1("<span style='color:#10B981'>●</span> OpenAI GPT-4")
+        M2("<span style='color:#667EEA'>●</span> Zhipu GLM-4")
+        M3("<span style='color:#F59E0B'>●</span> Anthropic Claude")
+        M4("<span style='color:#EC4899'>●</span> Kimi Moonshot")
+        M5("<span style='color:#8B5CF6'>●</span> Qwen Alibaba")
+        M6("<span style='color:#EF4444'>●</span> DeepSeek")
+        M7("<span style='color:#14B8A6'>●</span> MiniMax")
+    end
     
-    B1 --> B4
-    B1 --> B6
-    B2 --> B5
-    B2 --> B1
-    B3 --> B1
+    subgraph OUTPUT["🔴 OUTPUT LAYER"]
+        direction TB
+        O1[💬 Response]
+        O2[📊 Logs]
+        O3[📤 Export]
+    end
     
-    B1 -.-> Model
-    B4 -.-> Model
+    subgraph DATA["⚫ DATA LAYER"]
+        direction TB
+        D1[🗄️ PostgreSQL]
+        D2[⚡ Redis Cache]
+        D3[📁 File Store]
+    end
     
-    B1 --> D1
-    B2 --> D1
-    B5 --> D2
-    B6 --> D1
+    INPUT --> GW
+    GW --> CORE
+    CORE --> MODEL
+    CORE --> DATA
+    MODEL --> OUTPUT
     
-    style Users fill:#E0F2FE,stroke:#0284C7,stroke-width:2px
-    style Gateway fill:#FEF3C7,stroke:#D97706,stroke-width:2px
-    style Services fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
-    style Model fill:#F3E8FF,stroke:#9333EA,stroke-width:2px
-    style Data fill:#F1F5F9,stroke:#475569,stroke-width:2px
+    %% Styling with RGB colors
+    classDef input fill:#DBEAFE,stroke:#2563EB,stroke-width:3px,color:#1E40AF;
+    classDef gateway fill:#FEF9C3,stroke:#CA8A04,stroke-width:3px,color:#854D0E;
+    classDef core fill:#DCFCE7,stroke:#16A34A,stroke-width:3px,color:#166534;
+    classDef model fill:#F3E8FF,stroke:#9333EA,stroke-width:3px,color:#6B21A8;
+    classDef output fill:#FEE2E2,stroke:#DC2626,stroke-width:3px,color:#991B1B;
+    classDef data fill:#F1F5F9,stroke:#475569,stroke-width:3px,color:#1E293B;
+    
+    class I1,I2,I3,INPUT input;
+    class GW,GATEWAY gateway;
+    class S1,S2,S3,S4,S5,S6,S7,CORE core;
+    class M1,M2,M3,M4,M5,M6,M7,MODEL model;
+    class O1,O2,O3,OUTPUT output;
+    class D1,D2,D3,DATA data;
 ```
 
-### Component Description
+### Color Legend (RGB Theme)
 
-| Component | Color | Description |
-|-----------|-------|-------------|
-| **Users** | 🔵 Blue | End users (Mobile/Web/Channels) |
-| **API Gateway** | 🟡 Yellow | Go Gin server routing |
-| **Services** | 🟢 Green | Core business logic |
-| **Model Service** | 🟣 Purple | 7+ AI providers |
-| **Data Layer** | ⚫ Gray | PostgreSQL/Redis/Files |
+| Layer | Color | Hex | Description |
+|-------|-------|-----|-------------|
+| 🔵 **Input** | Blue | `#2563EB` | User interactions |
+| 🟡 **Gateway** | Yellow | `#CA8A04` | Request routing |
+| 🟢 **Core** | Green | `#16A34A` | Business logic |
+| 🟣 **Model** | Purple | `#9333EA` | AI providers |
+| 🔴 **Output** | Red | `#DC2626` | Responses/results |
+| ⚫ **Data** | Gray | `#475569` | Storage |
+
+### Data Flow
+
+```
+User Input → API Gateway → Services → AI Models → Response
+     │              │            │           │
+     └──────────────┴────────────┴───────────┘
+                    │
+                    ▼
+              Data Layer
+              (Store & Cache)
+```
 
 ---
 
