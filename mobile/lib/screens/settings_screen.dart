@@ -15,9 +15,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _defaultModel = 'gpt-4';
   String _votingMethod = 'comprehensive';
 
+  // Model API Keys
+  final Map<String, TextEditingController> _apiKeyControllers = {};
+  final Map<String, bool> _modelEnabled = {};
+
+  final List<Map<String, String>> _models = [
+    {'id': 'gpt-4', 'name': 'GPT-4', 'provider': 'OpenAI', 'keyEnv': 'OPENAI_API_KEY', 'keyName': 'openai_api_key'},
+    {'id': 'gpt-3.5-turbo', 'name': 'GPT-3.5 Turbo', 'provider': 'OpenAI', 'keyEnv': 'OPENAI_API_KEY', 'keyName': 'openai_api_key'},
+    {'id': 'claude-3-opus', 'name': 'Claude 3 Opus', 'provider': 'Anthropic', 'keyEnv': 'ANTHROPIC_API_KEY', 'keyName': 'anthropic_api_key'},
+    {'id': 'claude-3-sonnet', 'name': 'Claude 3 Sonnet', 'provider': 'Anthropic', 'keyEnv': 'ANTHROPIC_API_KEY', 'keyName': 'anthropic_api_key'},
+    {'id': 'glm-4', 'name': 'GLM-4', 'provider': 'Zhipu (智谱)', 'keyEnv': 'ZHIPU_API_KEY', 'keyName': 'zhipu_api_key'},
+    {'id': 'glm-3-turbo', 'name': 'GLM-3 Turbo', 'provider': 'Zhipu (智谱)', 'keyEnv': 'ZHIPU_API_KEY', 'keyName': 'zhipu_api_key'},
+    {'id': 'moonshot-v1-8k-chat', 'name': 'Kimi', 'provider': 'Moonshot (月之暗面)', 'keyEnv': 'KIMI_API_KEY', 'keyName': 'kimi_api_key'},
+    {'id': 'moonshot-v1-32k-chat', 'name': 'Kimi 32K', 'provider': 'Moonshot (月之暗面)', 'keyEnv': 'KIMI_API_KEY', 'keyName': 'kimi_api_key'},
+    {'id': 'qwen-turbo', 'name': 'Qwen Turbo', 'provider': 'Alibaba (通义千问)', 'keyEnv': 'DASHSCOPE_API_KEY', 'keyName': 'dashscope_api_key'},
+    {'id': 'qwen-plus', 'name': 'Qwen Plus', 'provider': 'Alibaba (通义千问)', 'keyEnv': 'DASHSCOPE_API_KEY', 'keyName': 'dashscope_api_key'},
+    {'id': 'qwen-max', 'name': 'Qwen Max', 'provider': 'Alibaba (通义千问)', 'keyEnv': 'DASHSCOPE_API_KEY', 'keyName': 'dashscope_api_key'},
+    {'id': 'deepseek-chat', 'name': 'DeepSeek Chat', 'provider': 'DeepSeek', 'keyEnv': 'DEEPSEEK_API_KEY', 'keyName': 'deepseek_api_key'},
+    {'id': 'deepseek-coder', 'name': 'DeepSeek Coder', 'provider': 'DeepSeek', 'keyEnv': 'DEEPSEEK_API_KEY', 'keyName': 'deepseek_api_key'},
+    {'id': 'abab6.5s-chat', 'name': 'MiniMax', 'provider': 'MiniMax', 'keyEnv': 'MINIMAX_API_KEY', 'keyName': 'minimax_api_key'},
+  ];
+
   @override
   void initState() {
     super.initState();
+    // Initialize controllers
+    for (var model in _models) {
+      _apiKeyControllers[model['id']!] = TextEditingController();
+      _modelEnabled[model['id']!] = false;
+    }
     _loadSettings();
   }
 
@@ -29,6 +55,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _multiModelVoting = prefs.getBool('multi_model_voting') ?? true;
       _defaultModel = prefs.getString('default_model') ?? 'gpt-4';
       _votingMethod = prefs.getString('voting_method') ?? 'comprehensive';
+
+      // Load API keys
+      for (var model in _models) {
+        final key = model['keyName']!;
+        final apiKey = prefs.getString('key_$key') ?? '';
+        _apiKeyControllers[model['id']!]!.text = apiKey;
+        _modelEnabled[model['id']!] = apiKey.isNotEmpty;
+      }
     });
   }
 
@@ -39,9 +73,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await prefs.setBool('multi_model_voting', _multiModelVoting);
     await prefs.setString('default_model', _defaultModel);
     await prefs.setString('voting_method', _votingMethod);
+
+    // Save API keys
+    for (var model in _models) {
+      final key = model['keyName']!;
+      await prefs.setString('key_$key', _apiKeyControllers[model['id']!]!.text);
+    }
+
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Settings saved / 设置已保存')),
+        const SnackBar(content: Text('Settings saved')),
       );
     }
   }
@@ -50,133 +91,149 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings / 设置'),
+        title: const Text('Settings'),
       ),
       body: ListView(
         children: [
-          // Server Settings / 服务器设置
-          _buildSectionHeader('Server / 服务器'),
+          // Server Settings
+          _buildSectionHeader('Server'),
           ListTile(
             leading: const Icon(Icons.dns),
-            title: const Text('Server URL / 服务器地址'),
+            title: const Text('Server URL'),
             subtitle: Text(_serverController.text),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showServerDialog(),
           ),
-          
-          // Appearance / 外观
-          _buildSectionHeader('Appearance / 外观'),
+
+          // Appearance
+          _buildSectionHeader('Appearance'),
           SwitchListTile(
             secondary: const Icon(Icons.dark_mode),
             title: const Text('Dark Mode'),
-            subtitle: const Text('深色模式'),
             value: _darkMode,
             onChanged: (value) {
               setState(() => _darkMode = value);
               _saveSettings();
             },
           ),
-          
-          // Model Settings / 模型设置
-          _buildSectionHeader('AI Models / AI模型'),
+
+          // Default Model
+          _buildSectionHeader('Default AI Model'),
           ListTile(
             leading: const Icon(Icons.model_training),
-            title: const Text('Default Model / 默认模型'),
+            title: const Text('Default Model'),
             subtitle: Text(_defaultModel),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showModelDialog(),
+            onTap: () => _showDefaultModelDialog(),
           ),
-          const Divider(),
-          
-          // Multi-Model Voting / 多模型投票
-          _buildSectionHeader('🗳️ Multi-Model Voting / 多模型投票'),
+
+          // Multi-Model Voting
+          _buildSectionHeader('Multi-Model Voting'),
           SwitchListTile(
             secondary: const Icon(Icons.poll),
             title: const Text('Enable Multi-Model Voting'),
-            subtitle: const Text('启用多模型投票决策'),
             value: _multiModelVoting,
             onChanged: (value) {
               setState(() => _multiModelVoting = value);
               _saveSettings();
             },
           ),
-          if (_multiModelVoting) ...[
+          if (_multiModelVoting)
             ListTile(
               leading: const Icon(Icons.analytics),
-              title: const Text('Voting Method / 投票方式'),
+              title: const Text('Voting Method'),
               subtitle: Text(_getVotingMethodName(_votingMethod)),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => _showVotingMethodDialog(),
             ),
-            _buildVotingMethodInfo(),
-          ],
-          
-          // Supported Models / 支持的模型
-          _buildSectionHeader('📋 Supported Models / 支持的模型'),
-          _buildModelList(),
-          
-          // Channels / 渠道
-          _buildSectionHeader('📱 Channels / 渠道'),
+
+          // API Keys Management
+          _buildSectionHeader('API Keys'),
+          ..._models.map((model) => _buildModelTile(model)),
+
+          // Channels
+          _buildSectionHeader('Channels'),
           SwitchListTile(
             secondary: const Icon(Icons.chat_bubble),
-            title: const Text('Feishu / 飞书'),
+            title: const Text('Feishu'),
             value: true,
             onChanged: (v) {},
           ),
           SwitchListTile(
             secondary: const Icon(Icons.chat_bubble_outline),
-            title: const Text('WeChat / 微信'),
+            title: const Text('WeChat'),
             value: true,
             onChanged: (v) {},
           ),
-          SwitchListTile(
-            secondary: const Icon(Icons.send),
-            title: const Text('Telegram'),
-            value: false,
-            onChanged: (v) {},
-          ),
-          SwitchListTile(
-            secondary: const Icon(Icons.discord),
-            title: const Text('Discord'),
-            value: false,
-            onChanged: (v) {},
-          ),
-          
-          // API Keys / API密钥
-          _buildSectionHeader('🔑 API Keys / API密钥'),
-          ListTile(
-            leading: const Icon(Icons.key),
-            title: const Text('Configure API Keys / 配置API密钥'),
-            subtitle: const Text('Set environment variables on server'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showApiKeysInfo(),
-          ),
-          
-          // About / 关于
-          _buildSectionHeader('About / 关于'),
+
+          // About
+          _buildSectionHeader('About'),
           const ListTile(
             leading: Icon(Icons.info),
             title: Text('Version'),
             subtitle: Text('1.0.0'),
           ),
-          const ListTile(
-            leading: Icon(Icons.code),
-            title: Text('GitHub'),
-            subtitle: Text('github.com/gotonote/corpflow'),
-            trailing: Icon(Icons.open_in_new),
-          ),
-          
+
           const SizedBox(height: 32),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: ElevatedButton(
               onPressed: _saveSettings,
-              child: const Text('Save Settings / 保存设置'),
+              child: const Text('Save All Settings'),
             ),
           ),
           const SizedBox(height: 32),
         ],
       ),
+    );
+  }
+
+  Widget _buildModelTile(Map<String, String> model) {
+    return ExpansionTile(
+      leading: Icon(
+        _modelEnabled[model['id']!] ? Icons.check_circle : Icons.circle_outlined,
+        color: _modelEnabled[model['id']!] ? Colors.green : Colors.grey,
+      ),
+      title: Text(model['name']!),
+      subtitle: Text(model['provider']!),
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _apiKeyControllers[model['id']],
+                decoration: InputDecoration(
+                  labelText: 'API Key',
+                  hintText: 'Enter your ${model['provider']} API key',
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.save),
+                    onPressed: () {
+                      final keyName = model['keyName']!;
+                      final keyValue = _apiKeyControllers[model['id']!]!.text;
+                      setState(() {
+                        _modelEnabled[model['id']!] = keyValue.isNotEmpty;
+                      });
+                      _saveSettings();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('${model['name']} API key saved')),
+                      );
+                    },
+                  ),
+                ),
+                obscureText: true,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Environment: ${model['keyEnv']}',
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -193,76 +250,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildVotingMethodInfo() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Card(
-        color: Colors.blue.shade50,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Voting Methods / 投票方式:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text('• Comprehensive (默认): Accuracy + Completeness + Clarity + Creativity'),
-              Text('• Cross-evaluation: Models evaluate each other'),
-              Text('• Length: Simply by response length'),
-              const SizedBox(height: 8),
-              Text(
-                '评估维度 / Evaluation Dimensions:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 4),
-              Text('• Accuracy (准确性) - 30%'),
-              Text('• Completeness (完整性) - 30%'),
-              Text('• Clarity (清晰度) - 20%'),
-              Text('• Creativity (创造性) - 20%'),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildModelList() {
-    final models = [
-      {'name': 'GPT-4', 'provider': 'OpenAI', 'key': 'OPENAI_API_KEY'},
-      {'name': 'Claude 3', 'provider': 'Anthropic', 'key': 'ANTHROPIC_API_KEY'},
-      {'name': 'GLM-4', 'provider': 'Zhipu (智谱)', 'key': 'ZHIPU_API_KEY'},
-      {'name': 'Kimi', 'provider': 'Moonshot (月之暗面)', 'key': 'KIMI_API_KEY'},
-      {'name': 'Qwen', 'provider': 'Alibaba (通义千问)', 'key': 'DASHSCOPE_API_KEY'},
-      {'name': 'DeepSeek', 'provider': 'DeepSeek', 'key': 'DEEPSEEK_API_KEY'},
-      {'name': 'MiniMax', 'provider': 'MiniMax', 'key': 'MINIMAX_API_KEY'},
-    ];
-
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: models.map((model) => ListTile(
-          leading: const Icon(Icons.psychology),
-          title: Text(model['name']!),
-          subtitle: Text(model['provider']!),
-          trailing: IconButton(
-            icon: const Icon(Icons.info_outline),
-            onPressed: () {},
-          ),
-        )).toList(),
-      ),
-    );
-  }
-
   String _getVotingMethodName(String method) {
     switch (method) {
       case 'comprehensive':
-        return 'Comprehensive (综合评分)';
+        return 'Comprehensive';
       case 'cross':
-        return 'Cross-evaluation (交叉评估)';
+        return 'Cross-evaluation';
       case 'length':
-        return 'By Length (按长度)';
+        return 'By Length';
       default:
         return method;
     }
@@ -272,7 +267,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Server URL / 服务器地址'),
+        title: const Text('Server URL'),
         content: TextField(
           controller: _serverController,
           decoration: const InputDecoration(
@@ -297,31 +292,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _showModelDialog() {
+  void _showDefaultModelDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Select Default Model / 选择默认模型'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            'gpt-4',
-            'claude-3-opus',
-            'glm-4',
-            'moonshot-v1-8k-chat',
-            'qwen-turbo',
-            'deepseek-chat',
-            'abab6.5s-chat',
-          ].map((model) => RadioListTile<String>(
-            title: Text(model),
-            value: model,
-            groupValue: _defaultModel,
-            onChanged: (v) {
-              setState(() => _defaultModel = v!);
-              Navigator.pop(context);
-              _saveSettings();
+        title: const Text('Select Default Model'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: _models.length,
+            itemBuilder: (context, index) {
+              final model = _models[index];
+              return RadioListTile<String>(
+                title: Text(model['name']!),
+                subtitle: Text(model['provider']!),
+                value: model['id']!,
+                groupValue: _defaultModel,
+                onChanged: (v) {
+                  setState(() => _defaultModel = v!);
+                  Navigator.pop(context);
+                  _saveSettings();
+                },
+              );
             },
-          )).toList(),
+          ),
         ),
       ),
     );
@@ -331,12 +326,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Voting Method / 投票方式'),
+        title: const Text('Voting Method'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             RadioListTile<String>(
-              title: const Text('Comprehensive (综合评分)'),
+              title: const Text('Comprehensive'),
               subtitle: const Text('Accuracy/Completeness/Clarity/Creativity'),
               value: 'comprehensive',
               groupValue: _votingMethod,
@@ -347,7 +342,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             RadioListTile<String>(
-              title: const Text('Cross-evaluation (交叉评估)'),
+              title: const Text('Cross-evaluation'),
               subtitle: const Text('Models evaluate each other'),
               value: 'cross',
               groupValue: _votingMethod,
@@ -358,7 +353,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             RadioListTile<String>(
-              title: const Text('By Length (按长度)'),
+              title: const Text('By Length'),
               subtitle: const Text('Simple length-based'),
               value: 'length',
               groupValue: _votingMethod,
@@ -374,51 +369,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _showApiKeysInfo() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('API Keys Configuration / API密钥配置'),
-        content: const SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Set these environment variables on your server:',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 12),
-              Text('# OpenAI\nexport OPENAI_API_KEY=sk-xxx'),
-              SizedBox(height: 8),
-              Text('# Anthropic\nexport ANTHROPIC_API_KEY=sk-ant-xxx'),
-              SizedBox(height: 8),
-              Text('# Zhipu GLM\nexport ZHIPU_API_KEY=xxx'),
-              SizedBox(height: 8),
-              Text('# Kimi (Moonshot)\nexport KIMI_API_KEY=xxx'),
-              SizedBox(height: 8),
-              Text('# Qwen (Alibaba)\nexport DASHSCOPE_API_KEY=xxx'),
-              SizedBox(height: 8),
-              Text('# DeepSeek\nexport DEEPSEEK_API_KEY=xxx'),
-              SizedBox(height: 8),
-              Text('# MiniMax\nexport MINIMAX_API_KEY=xxx'),
-              SizedBox(height: 16),
-              Text('For Docker, add to docker-compose.yml environment section.',
-                style: TextStyle(color: Colors.grey)),
-            ],
-          ),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   void dispose() {
     _serverController.dispose();
+    for (var controller in _apiKeyControllers.values) {
+      controller.dispose();
+    }
     super.dispose();
   }
 }
