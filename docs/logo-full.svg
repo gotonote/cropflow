@@ -1,29 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
   <defs>
     <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#F59E0B"/>
-      <stop offset="100%" style="stop-color:#D97706"/>
+      <stop offset="0%" style="stop-color:#FFB347"/>
+      <stop offset="100%" style="stop-color:#FFCC33"/>
     </linearGradient>
   </defs>
   
   <!-- Background -->
-  <rect width="1024" height="1024" rx="180" fill="url(#grad)"/>
+  <rect width="1024" height="1024" rx="120" fill="url(#grad)"/>
   
-  <!-- Horse Head - Minimalist -->
-  <g fill="none" stroke="white" stroke-width="40" stroke-linecap="round" stroke-linejoin="round">
-    <!-- Head outline -->
-    <path d="M640 760 C720 800 760 700 760 600 C760 440 680 320 560 280 C440 240 320 280 280 400 C240 520 280 680 360 800 C400 880 520 960 640 960 C720 960 780 920 800 840"/>
+  <!-- Horse Head - Line Style -->
+  <g fill="none" stroke="white" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Main head -->
+    <path d="M680 800 C760 840 800 740 800 640 C800 480 720 340 600 300 C480 260 340 300 300 420 C260 540 300 700 380 820 C420 900 540 980 660 980 C740 980 800 940 820 860"/>
     
-    <!-- Ear 1 -->
-    <path d="M440 280 L400 120 L500 240"/>
-    
-    <!-- Ear 2 -->
-    <path d="M540 260 L560 100 L640 230"/>
+    <!-- Ears -->
+    <path d="M460 300 L420 140 L520 260"/>
+    <path d="M560 280 L580 120 L660 250"/>
     
     <!-- Eye -->
-    <circle cx="520" cy="480" r="30" fill="white" stroke="none"/>
+    <circle cx="540" cy="500" r="24" fill="white" stroke="none"/>
     
     <!-- Nostril -->
-    <circle cx="720" cy="680" r="20" fill="white" stroke="none"/>
+    <circle cx="740" cy="700" r="16" fill="white" stroke="none"/>
   </g>
 </svg>
