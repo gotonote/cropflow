@@ -26,6 +26,33 @@ CorpFlow is a **multi-agent collaboration platform** that enables you to:
 
 ## Architecture
 
+## Demo: Build Your AI Team
+
+![Demo: Build AI Team](docs/demo.svg)
+
+### How It Works
+
+| Step | Action | Description |
+|------|--------|-------------|
+| 1 | 🔵 Create Agents | Drag Agent nodes, configure CEO/Manager/Worker |
+| 2 | 🟢 Define Hierarchy | Connect agents with Condition nodes |
+| 3 | 🟡 Add Tools | Add Search, Calculator, Code Review tools |
+| 4 | 🟠 Set Triggers | Add Message/Schedule/Webhook trigger |
+| 5 | 🔴 Execute | Click Run, monitor in Logs tab |
+
+### Team Structure Example
+
+```
+CEO (Chief AI Officer)
+  ├── Manager - Research
+  │   ├── Worker - Web Searcher
+  │   └── Worker - Data Analyzer
+  └── Manager - Operations
+      ├── Worker - Code Reviewer
+      └── Worker - Content Writer
+```
+
+
 ![Architecture Diagram](docs/architecture.svg)
 
 

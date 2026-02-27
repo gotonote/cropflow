@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#64748B"/>
+    </marker>
+  </defs>
+  <rect width="900" height="900" fill="#f8fafc"/>
+  
+  <!-- Title -->
+  <text x="450" y="30" font-size="20" fill="#1e293b" font-weight="bold" text-anchor="middle">Demo: Build AI Team with Visual Flow Editor</text>
+  
+  <!-- Step 1: Create Agents -->
+  <rect x="50" y="50" width="800" height="120" rx="10" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="70" y="80" font-size="16" fill="#1E40AF" font-weight="bold">🔵 Step 1: Create AI Agents</text>
+  <text x="70" y="110" font-size="12" fill="#3B82F6">1. Go to Flows tab → Create new flow</text>
+  <text x="70" y="130" font-size="12" fill="#3B82F6">2. Drag Agent nodes from sidebar</text>
+  <text x="70" y="150" font-size="12" fill="#3B82F6">3. Configure: CEO Agent, Manager Agent, Worker Agent</text>
+  
+  <!-- Arrow -->
+  <path d="M450,172 L450,195" stroke="#64748B" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Step 2: Define Hierarchy -->
+  <rect x="50" y="205" width="800" height="140" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="70" y="235" font-size="16" fill="#166534" font-weight="bold">🟢 Step 2: Define Team Hierarchy</text>
+  <text x="70" y="265" font-size="12" fill="#10B981">1. Connect agents with Condition nodes</text>
+  <text x="70" y="285" font-size="12" fill="#10B981">2. Set reporting relationships in Memory config</text>
+  <text x="70" y="305" font-size="12" fill="#10B981">3. CEO → manages → Managers → supervise → Workers</text>
+  
+  <!-- Hierarchy Diagram -->
+  <rect x="300" y="245" width="80" height="40" rx="5" fill="#86EFAC" stroke="#22C55E"/>
+  <text x="340" y="270" font-size="11" fill="#166534" text-anchor="middle">🤖 CEO</text>
+  <line x1="340" y1="285" x2="340" y2="305" stroke="#22C55E" stroke-width="2"/>
+  <rect x="220" y="310" width="70" height="35" rx="5" fill="#86EFAC" stroke="#22C55E"/>
+  <text x="255" y="332" font-size="10" fill="#166534" text-anchor="middle">Manager1</text>
+  <rect x="380" y="310" width="70" height="35" rx="5" fill="#86EFAC" stroke="#22C55E"/>
+  <text x="415" y="332" font-size="10" fill="#166634" text-anchor="middle">Manager2</text>
+  <line x1="255" y1="345" x2="255" y2="360" stroke="#22C55E" stroke-width="1"/>
+  <line x1="415" y1="345" x2="415" y2="360" stroke="#22C55E" stroke-width="1"/>
+  <rect x="160" y="365" width="60" height="30" rx="5" fill="#86EFAC" stroke="#22C55E"/>
+  <text x="190" y="385" font-size="9" fill="#166534" text-anchor="middle">Worker1</text>
+  <rect x="255" y="365" width="60" height="30" rx="5" fill="#86EFAC" stroke="#22C55E"/>
+  <text x="285" y="385" font-size="9" fill="#166534" text-anchor="middle">Worker2</text>
+  <rect x="350" y="365" width="60" height="30" rx="5" fill="#86EFAC" stroke="#22C55E"/>
+  <text x="380" y="385" font-size="9" fill="#166534" text-anchor="middle">Worker3</text>
+  <rect x="445" y="365" width="60" height="30" rx="5" fill="#86EFAC" stroke="#22C55E"/>
+  <text x="475" y="385" font-size="9" fill="#166534" text-anchor="middle">Worker4</text>
+  
+  <!-- Arrow -->
+  <path d="M450,400 L450,420" stroke="#64748B" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Step 3: Add Tools -->
+  <rect x="50" y="430" width="800" height="100" rx="10" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
+  <text x="70" y="460" font-size="16" fill="#92400E" font-weight="bold">🟡 Step 3: Add Tools & Capabilities</text>
+  <text x="70" y="490" font-size="12" fill="#F59E0B">1. Add Tool nodes: Web Search, Calculator, Code Review, File operations</text>
+  <text x="70" y="515" font-size="12" fill="#F59E0B">2. Assign tools to workers based on their roles</text>
+  
+  <!-- Tools Boxes -->
+  <rect x="500" y="455" width="70" height="35" rx="5" fill="#FDE68A" stroke="#F59E0B"/>
+  <text x="535" y="477" font-size="9" fill="#92400E" text-anchor="middle">🔍 Search</text>
+  <rect x="580" y="455" width="70" height="35" rx="5" fill="#FDE68A" stroke="#F59E0B"/>
+  <text x="615" y="477" font-size="9" fill="#92400E" text-anchor="middle">🧮 Calc</text>
+  <rect x="660" y="455" width="70" height="35" rx="5" fill="#FDE68A" stroke="#F59E0B"/>
+  <text x="695" y="477" font-size="9" fill="#92400E" text-anchor="middle">📝 Review</text>
+  <rect x="740" y="455" width="70" height="35" rx="5" fill="#FDE68A" stroke="#F59E0B"/>
+  <text x="775" y="477" font-size="9" fill="#92400E" text-anchor="middle">📁 File</text>
+  
+  <!-- Arrow -->
+  <path d="M450,532 L450,555" stroke="#64748B" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Step 4: Set Triggers -->
+  <rect x="50" y="565" width="800" height="80" rx="10" fill="#FCE7F3" stroke="#EC4899" stroke-width="2"/>
+  <text x="70" y="595" font-size="16" fill="#9D174D" font-weight="bold">🟠 Step 4: Set Triggers</text>
+  <text x="70" y="625" font-size="12" fill="#EC4899">1. Add Trigger node: Message / Schedule / Webhook</text>
+  <text x="70" y="645" font-size="12" fill="#EC4899">2. Connect trigger to CEO agent to start workflow</text>
+  
+  <!-- Trigger Box -->
+  <rect x="600" y="580" width="100" height="45" rx="5" fill="#FBCFE8" stroke="#EC4899"/>
+  <text x="650" y="608" font-size="11" fill="#9D174D" text-anchor="middle">⚡ Trigger</text>
+  
+  <!-- Arrow -->
+  <path d="M450,647 L450,670" stroke="#64748B" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Step 5: Execute -->
+  <rect x="50" y="680" width="800" height="100" rx="10" fill="#FEE2E2" stroke="#EF4444" stroke-width="2"/>
+  <text x="70" y="710" font-size="16" fill="#991B1B" font-weight="bold">🔴 Step 5: Execute & Monitor</text>
+  <text x="70" y="740" font-size="12" fill="#EF4444">1. Click "Run" to execute the workflow</text>
+  <text x="70" y="765" font-size="12" fill="#EF4444">2. View real-time execution in Logs tab</text>
+  
+  <!-- Run Button -->
+  <rect x="550" y="700" width="120" height="50" rx="8" fill="#EF4444" stroke="#DC2626"/>
+  <text x="610" y="730" font-size="14" fill="white" font-weight="bold" text-anchor="middle">▶️ Run</text>
+  
+  <!-- Result -->
+  <rect x="700" y="700" width="120" height="50" rx="8" fill="#DCFCE7" stroke="#16A34A"/>
+  <text x="760" y="730" font-size="11" fill="#166534" text-anchor="middle">✅ Success</text>
+  
+  <!-- Arrow -->
+  <path d="M450,782 L450,805" stroke="#64748B" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Result Flow -->
+  <rect x="50" y="815" width="800" height="60" rx="10" fill="#F1F5F9" stroke="#475569" stroke-width="2"/>
+  <text x="70" y="845" font-size="16" fill="#1E293B" font-weight="bold">⚫ Result: Autonomous AI Team Running</text>
+  <text x="70" y="865" font-size="11" fill="#6B7280">CEO assigns → Managers coordinate → Workers execute → Results aggregated → Response delivered</text>
+</svg>
