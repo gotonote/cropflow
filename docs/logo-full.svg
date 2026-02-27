@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="primary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="180" fill="url(#primary)"/>
+  
+  <!-- CF Letters - Flow Style -->
+  <g fill="none" stroke="white" stroke-width="72" stroke-linecap="round" stroke-linejoin="round">
+    <!-- C -->
+    <path d="M 620 340 A 180 180 0 1 0 620 684"/>
+    <circle cx="620" cy="340" r="36" fill="white"/>
+    
+    <!-- F -->
+    <path d="M 380 320 L 380 704"/>
+    <path d="M 380 400 L 520 400"/>
+    <path d="M 380 520 L 460 520"/>
+    
+    <!-- Connection -->
+    <circle cx="380" cy="320" r="28" fill="white"/>
+    <circle cx="520" cy="400" r="20" fill="#f093fb"/>
+    <circle cx="460" cy="520" r="20" fill="#f093fb"/>
+  </g>
+  
+  <!-- Center Dot -->
+  <circle cx="512" cy="512" r="48" fill="white"/>
+  
+  <!-- AI Star -->
+  <polygon points="512,180 525,235 582,235 538,270 552,325 512,295 472,325 486,270 442,235 499,235" fill="white"/>
+</svg>

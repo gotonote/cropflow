@@ -1,5 +1,9 @@
 # CorpFlow
 
+<p align="center">
+  <img src="docs/logo.svg" width="200" alt="CorpFlow Logo">
+</p>
+
 **多智能体协作平台**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
