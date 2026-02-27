@@ -402,6 +402,46 @@ type Rating struct {
 	Creativity   float64 `json:"creativity"`   // 创造性
 }
 
+// ModelRatingsToScores 转换为分数map
+func (e *Evaluation) ModelRatingsToScores() map[string]float64 {
+	scores := make(map[string]float64)
+	for model, rating := range e.ModelRatings {
+		scores[model] = rating.OverallScore
+	}
+	return scores
+}
+
+// singleModelVoting 单模型投票 (多次调用+不同参数)
+func (s *Service) singleModelVoting(ctx context.Context, req VoteRequest, model string) map[string]string {
+	responses := make(map[string]string)
+	
+	// 使用不同的temperature多次调用，模拟多模型投票效果
+	temperatures := []float64{0.3, 0.7, 1.0}
+	labels := []string{"conservative", "balanced", "creative"}
+	
+	for i, temp := range temperatures {
+		// 克隆请求，修改temperature
+		tempReq := req
+		tempReq.Temperature = temp
+		
+		// 调用模型
+		msgs := make([]Message, 0, len(req.Messages)+1)
+		if req.SystemPrompt != "" {
+			msgs = append(msgs, Message{Role: "system", Content: req.SystemPrompt})
+		}
+		msgs = append(msgs, req.Messages...)
+		
+		resp, err := s.Chat(ctx, model, msgs)
+		if err != nil {
+			responses[fmt.Sprintf("%s_%s", model, labels[i])] = fmt.Sprintf("[Error: %v]", err)
+		} else {
+			responses[fmt.Sprintf("%s_%s", model, labels[i])] = resp.Content
+		}
+	}
+	
+	return responses
+}
+
 // ProsCons 优缺点
 type ProsCons struct {
 	Pros  []string `json:"pros"`  // 优点
@@ -429,24 +469,54 @@ func (s *Service) Vote(ctx context.Context, req VoteRequest) (*VoteResponse, err
 	// 更新请求中的模型列表
 	req.Models = availableModels
 
-	// 1. 并发调用所有可用模型获取响应
-	responses := s并发调用模型(ctx, req)
+	var responses map[string]string
+	var scores map[string]float64
 
-	// 如果只有一个模型，直接返回
-	if len(responses) == 1 {
+	// 根据可用模型数量选择投票策略
+	if len(availableModels) == 1 {
+		// 只有一个模型：使用多轮对话+不同参数模拟投票
+		responses = s.singleModelVoting(ctx, req, availableModels[0])
+	} else {
+		// 多个模型：并发调用所有模型
+		responses = s并发调用模型(ctx, req)
+		
+		// 过滤掉失败的模型
+		var successfulModels []string
 		for model, resp := range responses {
-			return &VoteResponse{
-				Responses:     responses,
-				Winner:        model,
-				WinnerContent: resp,
-				Scores:        map[string]float64{model: 100},
-				Evaluation:    nil,
-			}, nil
+			if !strings.HasPrefix(resp, "[Error:") && !strings.HasPrefix(resp, "[Model") {
+				successfulModels = append(successfulModels, model)
+			}
+		}
+
+		if len(successfulModels) == 1 {
+			// 如果只有一个成功，使用单模型投票逻辑
+			responses = s.singleModelVoting(ctx, req, successfulModels[0])
+		} else if len(successfulModels) == 0 {
+			return nil, fmt.Errorf("all models failed: please check API keys")
 		}
 	}
 
 	// 2. 根据任务类型选择评估方法
-	var scores map[string]float64
+	if len(responses) > 1 {
+		switch req.VotingMethod {
+		case "length":
+			scores = s.按长度评分(responses)
+		case "cross", "交叉评估":
+			_, eval := s.交叉评估(ctx, successfulModels, responses, req.TaskType)
+			if eval != nil {
+				scores = eval.ModelRatingsToScores()
+			}
+		default:
+			_, eval := s.综合评分(ctx, successfulModels, responses, req.TaskType)
+			if eval != nil {
+				scores = eval.ModelRatingsToScores()
+			}
+		}
+	}
+
+	// 3. 选择得分最高的
+	winner := ""
+	maxScore := 0.0
 	var eval *Evaluation
 
 	switch req.VotingMethod {
