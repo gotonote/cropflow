@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import FlowEditor from './FlowEditor'
 import './App.css'
 
 type Tab = 'home' | 'chat' | 'flow' | 'agents' | 'tools' | 'logs' | 'settings'
@@ -117,13 +118,7 @@ function ChatPanel() {
 }
 
 function FlowPanel() {
-  return (
-    <div className="flow-container">
-      <h3>🔀 Flow Editor</h3>
-      <p>Visual workflow automation</p>
-      <div className="flow-placeholder"><p>📝 Use templates to get started!</p></div>
-    </div>
-  )
+  return <FlowEditor />
 }
 
 function AgentsPanel() {
