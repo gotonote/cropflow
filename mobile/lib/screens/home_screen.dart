@@ -262,6 +262,128 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             
+            const SizedBox(height: 20),
+            
+            // Demo / 示例
+            Text(
+              'Demo / 示例',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            
+            // Chat Demo
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.play_circle, color: Color(0xFF667eea)),
+                        const SizedBox(width: 8),
+                        Text('💬 Chat Demo', style: TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('👤 You: 什么是CorpFlow?', style: TextStyle(fontSize: 13)),
+                          const SizedBox(height: 8),
+                          Text('🤖 CorpFlow: CorpFlow是一个多智能体协作平台，支持...', style: TextStyle(fontSize: 13, color: Colors.grey[700])),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            
+            // Flow Demo
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.account_tree, color: Color(0xFF667eea)),
+                        const SizedBox(width: 8),
+                        Text('🔀 Flow Demo', style: TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('流程: 触发器 → 智能体A → 条件分支 → 工具节点 → 输出', style: TextStyle(fontSize: 13)),
+                          const SizedBox(height: 4),
+                          Text('当用户发送消息 → AI处理 → 判断是否需要工具 → 执行 → 返回结果', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            
+            // Multi-Model Voting Demo
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.poll, color: Color(0xFF667eea)),
+                        const SizedBox(width: 8),
+                        Text('🗳️ Voting Demo', style: TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('问题: 如何提升产品用户体验?', style: TextStyle(fontSize: 13)),
+                          const SizedBox(height: 8),
+                          Text('GPT-4: 建议1... (得分: 85)', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                          Text('GLM-4: 建议2... (得分: 92) ⭐', style: TextStyle(fontSize: 12, color: Colors.green[700])),
+                          Text('Kimi: 建议3... (得分: 78)', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                          const SizedBox(height: 4),
+                          Text('最终选择: GLM-4 (综合得分最高)', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            
             const SizedBox(height: 32),
           ],
         ),
