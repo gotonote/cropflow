@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # Go后端服务
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=host=db user=agentflow password=secret dbname=agentflow sslmode=disable
+      - REDIS_URL=redis:6379
+      - PORT=8080
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+  # 前端
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
+    restart: unless-stopped
+
+  # PostgreSQL数据库
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=agentflow
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=agentflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
