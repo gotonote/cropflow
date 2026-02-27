@@ -1,27 +1,49 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
   <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFB347"/>
-      <stop offset="100%" style="stop-color:#FFCC33"/>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD4A3"/>
+      <stop offset="100%" style="stop-color:#FF9E5E"/>
     </linearGradient>
   </defs>
   
   <!-- Background -->
-  <rect width="1024" height="1024" rx="120" fill="url(#grad)"/>
+  <rect width="1024" height="1024" rx="160" fill="url(#bg)"/>
   
-  <!-- Horse Head - Line Style -->
-  <g fill="none" stroke="white" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Horse Head - Filled Style -->
+  <g>
     <!-- Main head -->
-    <path d="M680 800 C760 840 800 740 800 640 C800 480 720 340 600 300 C480 260 340 300 300 420 C260 540 300 700 380 820 C420 900 540 980 660 980 C740 980 800 940 820 860"/>
+    <path d="M512 240 C360 240 260 360 260 520 C260 680 320 800 400 880 C360 920 340 960 360 1000 C400 1040 480 1060 560 1060 C640 1060 720 1040 760 1000 C800 960 800 900 760 840 C840 760 880 640 880 520 C880 360 760 240 512 240Z" fill="white"/>
+    
+    <!-- Snout -->
+    <ellipse cx="720" cy="760" rx="140" ry="180" fill="white"/>
     
     <!-- Ears -->
-    <path d="M460 300 L420 140 L520 260"/>
-    <path d="M560 280 L580 120 L660 250"/>
+    <path d="M360 280 L320 120 L460 260Z" fill="white"/>
+    <path d="M520 260 L540 100 L640 250Z" fill="white"/>
     
-    <!-- Eye -->
-    <circle cx="540" cy="500" r="24" fill="white" stroke="none"/>
+    <!-- Inner ears -->
+    <path d="M370 270 L340 170 L430 260Z" fill="#FFD4A3"/>
+    <path d="M524 250 L536 150 L600 240Z" fill="#FFD4A3"/>
+    
+    <!-- Eyes -->
+    <ellipse cx="480" cy="520" rx="60" ry="76" fill="#2D2D2D"/>
+    <ellipse cx="620" cy="520" rx="60" ry="76" fill="#2D2D2D"/>
+    
+    <!-- Eye shine -->
+    <circle cx="504" cy="496" r="24" fill="white"/>
+    <circle cx="644" cy="496" r="24" fill="white"/>
+    
+    <!-- Blush -->
+    <ellipse cx="400" cy="640" rx="40" ry="24" fill="#FFB6C1" opacity="0.6"/>
+    <ellipse cx="700" cy="640" rx="40" ry="24" fill="#FFB6C1" opacity="0.6"/>
     
     <!-- Nostril -->
-    <circle cx="740" cy="700" r="16" fill="white" stroke="none"/>
+    <ellipse cx="780" cy="760" rx="24" ry="16" fill="#2D2D2D"/>
+    
+    <!-- Mouth -->
+    <path d="M720 820 Q760 840 720 870" stroke="#2D2D2D" stroke-width="6" fill="none" stroke-linecap="round"/>
+    
+    <!-- Hair tuft -->
+    <path d="M460 240 C440 200 460 160 500 170 C540 180 560 200 550 240" fill="white"/>
   </g>
 </svg>
