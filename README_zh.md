@@ -28,24 +28,6 @@ CorpFlow 是一个**多智能体协作平台**，支持：
 
 ![架构图](docs/architecture.svg)
 
-### 层级说明
-
-| 层级 | 颜色 | 组件 |
-|------|------|------|
-| 🔵 **输入层** | <span style="color:#3B82F6">**蓝色**</span> | 移动端、网页端、渠道 |
-| 🟡 **网关层** | <span style="color:#F59E0B">**黄色**</span> | API 网关 (Go Gin) |
-| 🟢 **核心服务** | <span style="color:#10B981">**绿色**</span> | 智能体、流程、渠道、工具、日志、记忆、模板 |
-| 🟣 **模型层** | <span style="color:#8B5CF6">**紫色**</span> | OpenAI、智谱、Anthropic、Kimi、Qwen、DeepSeek、 MiniMax |
-| 🔴 **输出层** | <span style="color:#EF4444">**红色**</span> | 响应、日志、导出 |
-| ⚫ **数据层** | <span style="color:#6B7280">**灰色**</span> | PostgreSQL、Redis、文件存储 |
-
-### 数据流向
-
-```
-用户 → API 网关 → 核心服务 → AI 模型 → 响应
-                    ↓
-               数据层
-```
 
 | **代码工具** | ✅ Shell/Git/审查/测试 | ✅ | ✅ | ✅ | ❌ |
 | **执行日志** | ✅ 步骤级追踪 | ✅ | ✅ | ✅ | ✅ |
