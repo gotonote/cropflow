@@ -55,14 +55,25 @@ func (s *Service) ProcessWithVoting(ctx context.Context, cfg Config, input strin
 
 // ProcessWithCollaboration 多智能体协作处理
 // CEO 分解任务 → Manager 分配任务 → Worker 执行 → Manager 汇总 → CEO 最终决策
+// 支持动态模型切换：下级投票换领导模型，领导根据业绩换下属模型
 func (s *Service) ProcessWithCollaboration(ctx context.Context, cfg Config, input string) (string, error) {
-	// 1. CEO 角色：分析任务，分解为子任务
+	// 初始化模型
+	ceoModel := cfg.Model
+	managerModel := cfg.Model
+	workerModel := cfg.Model
+	
+	availableModels := []string{"gpt-4", "glm-4", "claude-3-sonnet", "kimi"}
+	
+	// 1. CEO 角色：分析任务，分解为子任务，同时评估是否需要更换模型
 	ceoPrompt := cfg.CEOPrompt
 	if ceoPrompt == "" {
-		ceoPrompt = "你是一个CEO，负责分析用户需求并分解任务。分析以下任务，将其分解为具体的子任务："
+		ceoPrompt = "你是一个CEO，负责分析用户需求并分解任务。"
 	}
-	ceoInput := ceoPrompt + "\n\n用户任务: " + input
-	ceoResponse, err := s.callModel(ctx, cfg.Model, ceoPrompt, input)
+	
+	// 下级投票决定是否更换 CEO 模型
+	ceoModel, _ = s.voteForModel(ctx, availableModels, "CEO", ceoModel)
+	
+	ceoResponse, err := s.callModel(ctx, ceoModel, ceoPrompt, input)
 	if err != nil {
 		return "", fmt.Errorf("CEO 分析失败: %v", err)
 	}
@@ -70,9 +81,10 @@ func (s *Service) ProcessWithCollaboration(ctx context.Context, cfg Config, inpu
 	// 2. Manager 角色：接收CEO分解的子任务，分配给Worker
 	managerPrompt := cfg.ManagerPrompt
 	if managerPrompt == "" {
-		managerPrompt = "你是一个Manager，负责将任务分配给具体的执行者。根据CEO的指示，安排每个子任务的执行顺序和负责人："
+		managerPrompt = "你是一个Manager，负责将任务分配给具体的执行者。"
 	}
-	managerResponse, err := s.callModel(ctx, cfg.Model, managerPrompt, "CEO分析结果: "+ceoResponse+"\n\n原始任务: "+input)
+	managerResponse, err := s.callModel(ctx, managerModel, managerPrompt, 
+		"CEO分析结果: "+ceoResponse+"\n\n原始任务: "+input)
 	if err != nil {
 		return "", fmt.Errorf("Manager 分配失败: %v", err)
 	}
@@ -80,26 +92,91 @@ func (s *Service) ProcessWithCollaboration(ctx context.Context, cfg Config, inpu
 	// 3. Worker 角色：执行具体任务
 	workerPrompt := cfg.WorkerPrompt
 	if workerPrompt == "" {
-		workerPrompt = "你是一个Worker，负责执行具体的任务。根据Manager的安排，执行以下任务："
+		workerPrompt = "你是一个Worker，负责执行具体的任务。"
 	}
-	workerResponse, err := s.callModel(ctx, cfg.Model, workerPrompt, "Manager安排: "+managerResponse+"\n\n请执行具体任务并给出结果。")
+	workerResponse, err := s.callModel(ctx, workerModel, workerPrompt, 
+		"Manager安排: "+managerResponse+"\n\n请执行具体任务并给出结果。")
 	if err != nil {
 		return "", fmt.Errorf("Worker 执行失败: %v", err)
 	}
 	
-	// 4. CEO 最终决策：汇总所有结果，给出最终答案
-	finalPrompt := "你是一个CEO，负责整合所有信息给出最终答案。请综合以下各个环节的结果，给出最终解决方案："
-	finalResponse, err := s.callModel(ctx, cfg.Model, finalPrompt, 
+	// 4. 领导根据业绩（响应质量）决定是否更换下属模型
+	managerModel = s.evaluateAndSwitchModel(ctx, availableModels, "Manager", managerModel, managerResponse)
+	workerModel = s.evaluateAndSwitchModel(ctx, availableModels, "Worker", workerModel, workerResponse)
+	
+	// 5. CEO 最终决策：汇总所有结果，给出最终答案
+	finalPrompt := "你是一个CEO，负责整合所有信息给出最终答案。"
+	finalResponse, err := s.callModel(ctx, ceoModel, finalPrompt, 
 		"CEO分析: "+ceoResponse+"\n\nManager安排: "+managerResponse+"\n\nWorker执行结果: "+workerResponse+"\n\n原始任务: "+input)
 	if err != nil {
 		return "", fmt.Errorf("CEO 最终决策失败: %v", err)
 	}
 	
-	// 汇总完整流程
-	result := fmt.Sprintf("【任务分析】\n%s\n\n【任务分配】\n%s\n\n【执行结果】\n%s\n\n【最终方案】\n%s", 
-		ceoResponse, managerResponse, workerResponse, finalResponse)
+	// 汇总完整流程（包含模型切换信息）
+	result := fmt.Sprintf("【模型状态】\nCEO: %s | Manager: %s | Worker: %s\n\n【任务分析】\n%s\n\n【任务分配】\n%s\n\n【执行结果】\n%s\n\n【最终方案】\n%s", 
+		ceoModel, managerModel, workerModel, ceoResponse, managerResponse, workerResponse, finalResponse)
 	
 	return result, nil
+}
+
+// voteForModel 下级投票选择最佳模型
+func (s *Service) voteForModel(ctx context.Context, models []string, role, currentModel string) (string, error) {
+	if len(models) < 2 {
+		return currentModel, nil
+	}
+	
+	// 模拟下级投票：让其他模型评估当前模型
+	var bestModel string
+	bestScore := 0.0
+	
+	votePrompt := fmt.Sprintf("作为%s的下级，请投票选择最适合当前任务的AI模型。候选模型: %v。当前模型: %s。请直接返回你认为最佳的模型名称。", role, models, currentModel)
+	
+	for _, model := range models {
+		response, err := s.callModel(ctx, model, "你是一个公正的评审", votePrompt)
+		if err != nil {
+			continue
+		}
+		// 简单评分逻辑
+		score := float64(len(response)) / 10 // 粗略评分
+		if score > bestScore {
+			bestScore = score
+			bestModel = model
+		}
+	}
+	
+	if bestModel == "" {
+		return currentModel, nil
+	}
+	
+	return bestModel, nil
+}
+
+// evaluateAndSwitchModel 领导根据业绩决定是否更换下属模型
+func (s *Service) evaluateAndSwitchModel(ctx context.Context, models []string, role, currentModel, performance string) string {
+	if len(models) < 2 {
+		return currentModel
+	}
+	
+	// 让领导评估下属表现
+	evalPrompt := fmt.Sprintf("作为%s的领导，请评估下属的工作质量(0-100分)，并决定是否需要更换模型。直接返回: 分数,是否换模型(yes/no)", role)
+	
+	response, err := s.callModel(ctx, currentModel, "你是一个严格的领导", evalPrompt+"\n\n工作成果: "+performance)
+	if err != nil {
+		return currentModel
+	}
+	
+	// 解析响应，判断是否需要更换
+	// 简单实现：如果响应中包含 "yes" 或 "更换" 则更换模型
+	if strings.Contains(response, "yes") || strings.Contains(response, "更换") || strings.Contains(response, "换") {
+		// 选择一个不同的模型
+		for _, model := range models {
+			if model != currentModel {
+				return model
+			}
+		}
+	}
+	
+	return currentModel
 }
 
 // ProcessWithAgent 使用指定智能体处理 (带记忆)
@@ -264,6 +341,9 @@ type Config struct {
 	CEOPrompt         string            `json:"ceo_prompt"`          // CEO 角色提示
 	ManagerPrompt     string            `json:"manager_prompt"`      // Manager 角色提示
 	WorkerPrompt      string            `json:"worker_prompt"`       // Worker 角色提示
+	AvailableModels   []string          `json:"available_models"`    // 可用模型列表（用于动态切换）
+	EnableModelVote   bool              `json:"enable_model_vote"`   // 启用下级投票换领导模型
+	EnablePerfSwitch  bool              `json:"enable_perf_switch"`  // 启用领导根据业绩换下属模型
 }
 
 // Tool 工具定义
