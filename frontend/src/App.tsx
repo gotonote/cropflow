@@ -38,6 +38,7 @@ function App() {
 const templates = [
   { id: 'simple-chat', name: '💬 Simple Chat', desc: 'Basic AI conversation' },
   { id: 'multi-agent', name: '🤝 Multi-Agent Collab', desc: 'CEO + Manager + Worker' },
+  { id: 'superpowers-dev', name: '⚡ Superpowers Dev', desc: 'Professional SDLC workflow' },
   { id: 'research', name: '🔍 Research', desc: 'Search & analyze' },
   { id: 'customer-service', name: '🎧 Customer Service', desc: 'AI support bot' },
   { id: 'code-review', name: '📝 Code Review', desc: 'Automated review' },

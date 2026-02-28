@@ -171,10 +171,38 @@ const NewsSummarizer = `{
   ]
 }`
 
+// Template: Superpowers-style Software Development Workflow
+// Based on Superpowers (obra/superpowers) - 65k stars
+// Workflow: Brainstorming → Planning → Subagent Dev → TDD → Code Review → Finish
+const SuperpowersDev = `{
+  "name": "Superpowers Development",
+  "description": "Professional SDLC: Brainstorm → Plan → TDD → Review → Finish",
+  "nodes": [
+    {"id": "1", "type": "trigger", "data": {"label": "需求输入"}},
+    {"id": "2", "type": "agent", "data": {"label": "Brainstorming", "role": "designer", "prompt": "通过提问澄清需求，展示设计方案"}},
+    {"id": "3", "type": "agent", "data": {"label": "Planning", "role": "planner", "prompt": "创建详细实现计划，分解为2-5分钟的任务"}},
+    {"id": "4", "type": "agent", "data": {"label": "Subagent Dev", "role": "developer", "prompt": "并行执行每个任务，两阶段审查"}},
+    {"id": "5", "type": "agent", "data": {"label": "TDD", "role": "tester", "prompt": "RED-GREEN-REFACTOR: 先写测试，再写代码"}},
+    {"id": "6", "type": "agent", "data": {"label": "Code Review", "role": "reviewer", "prompt": "按计划审查代码，报告问题"}},
+    {"id": "7", "type": "agent", "data": {"label": "Finish", "role": "manager", "prompt": "验证测试，合并/PR/清理"}},
+    {"id": "8", "type": "output", "data": {"label": "开发完成"}}
+  ],
+  "edges": [
+    {"id": "e1-2", "source": "1", "target": "2"},
+    {"id": "e2-3", "source": "2", "target": "3"},
+    {"id": "e3-4", "source": "3", "target": "4"},
+    {"id": "e4-5", "source": "4", "target": "5"},
+    {"id": "e5-6", "source": "5", "target": "6"},
+    {"id": "e6-7", "source": "6", "target": "7"},
+    {"id": "e7-8", "source": "7", "target": "8"}
+  ]
+}`
+
 // All templates
 var AllTemplates = []Template{
   {"simple-chat", "Simple Chat", "Basic AI chat", SimpleChat},
   {"multi-agent-collaboration", "Multi-Agent Collaboration", "CEO + Manager + Worker collaboration", MultiAgentCollaboration},
+  {"superpowers-dev", "Superpowers Dev", "Professional SDLC workflow (TDD, Code Review)", SuperpowersDev},
   {"research-assistant", "Research Assistant", "Search & analyze", ResearchAssistant},
   {"customer-service", "Customer Service", "AI support", CustomerService},
   {"code-review", "Code Review", "Automated code review", CodeReview},
