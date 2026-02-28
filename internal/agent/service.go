@@ -501,8 +501,9 @@ func ToOpenAITools(tools []Tool) []openai.Tool {
 // PerformanceEvalConfig 绩效评估定时任务配置
 type PerformanceEvalConfig struct {
 	EvalInterval time.Duration // 评估间隔，如 1小时、每天
-	Models        []string      // 可用模型列表
-	Workers       []string      // 待评估的下属列表: ["Manager", "Worker"]
+	Models       []string      // 可用模型列表
+	Workers      []string      // 待评估的下属列表: ["Manager", "Worker"]
+	CompanyGoal  string        // 公司目标/业绩指标
 }
 
 // StartPerformanceEvalScheduler 启动绩效评估定时调度器
@@ -512,34 +513,122 @@ func (s *Service) StartPerformanceEvalScheduler(cfg PerformanceEvalConfig) {
 		defer ticker.Stop()
 		
 		for range ticker.C {
-			s.runPerformanceEval(cfg)
+			s.runCompanyPerformanceEval(cfg)
 		}
 	}()
 }
 
-// runPerformanceEval 执行绩效评估
-func (s *Service) runPerformanceEval(cfg PerformanceEvalConfig) {
+// runCompanyPerformanceEval 从公司整体业绩出发进行绩效评估
+// 流程：评估公司业绩 → 反向追溯各层级贡献 → 调整模型配置
+func (s *Service) runCompanyPerformanceEval(cfg PerformanceEvalConfig) {
 	ctx := context.Background()
 	
-	// 获取所有下属的最近工作记录
-	for _, worker := range cfg.Workers {
-		// 获取该下属最近的工作成果
-		performance := s.getWorkerPerformance(worker)
-		
-		// 领导评估下属
-		leaderRole := s.getLeaderRole(worker) // Manager的领导是CEO，Worker的领导是Manager
-		leaderModel := s.defaultModel
-		
-		// 评估是否需要更换模型
-		newModel := s.evaluateAndSwitchModel(ctx, cfg.Models, leaderRole, leaderModel, performance)
-		
-		if newModel != leaderModel {
-			fmt.Printf("[绩效评估] %s 模型更换: %s -> %s\n", worker, leaderModel, newModel)
-			// TODO: 更新该下属使用的模型配置
-		} else {
-			fmt.Printf("[绩效评估] %s 模型保持: %s (评分OK)\n", worker, leaderModel)
+	// 1. 获取公司整体业绩
+	companyPerformance := s.getCompanyPerformance()
+	
+	// 2. 根据公司业绩，反向追溯各层级的贡献和表现
+	fmt.Printf("\n========== 公司绩效评估 ==========\n")
+	fmt.Printf("公司整体业绩: %s\n", companyPerformance)
+	fmt.Printf("目标: %s\n\n", cfg.CompanyGoal)
+	
+	// 3. CEO 评估：基于公司业绩，决定是否调整战略/模型
+	ceoModel := s.defaultModel
+	ceoEvaluation := s.evaluateRolePerformance(ctx, "CEO", ceoModel, companyPerformance, cfg.CompanyGoal)
+	if ceoEvaluation.shouldSwitch {
+		ceoModel = ceoEvaluation.newModel
+		fmt.Printf("→ CEO 模型调整为: %s (原因: %s)\n", ceoModel, ceoEvaluation.reason)
+	}
+	
+	// 4. Manager 评估：CEO 基于公司业绩评估 Manager
+	managerModel := s.defaultModel
+	managerEvaluation := s.evaluateRolePerformance(ctx, "Manager", managerModel, companyPerformance, cfg.CompanyGoal)
+	if managerEvaluation.shouldSwitch {
+		managerModel = managerEvaluation.newModel
+		fmt.Printf("→ Manager 模型调整为: %s (原因: %s)\n", managerModel, managerEvaluation.reason)
+	}
+	
+	// 5. Worker 评估：Manager 基于公司业绩评估 Worker
+	workerModel := s.defaultModel
+	workerEvaluation := s.evaluateRolePerformance(ctx, "Worker", workerModel, companyPerformance, cfg.CompanyGoal)
+	if workerEvaluation.shouldSwitch {
+		workerModel = workerEvaluation.newModel
+		fmt.Printf("→ Worker 模型调整为: %s (原因: %s)\n", workerModel, workerEvaluation.reason)
+	}
+	
+	fmt.Printf("=====================================\n\n")
+	
+	// TODO: 保存评估结果到数据库
+}
+
+// EvaluationResult 评估结果
+type EvaluationResult struct {
+	shouldSwitch bool
+	newModel     string
+	reason       string
+	score        int
+}
+
+// evaluateRolePerformance 评估某个角色的表现（从公司业绩出发）
+func (s *Service) evaluateRolePerformance(ctx context.Context, role, currentModel, companyPerformance, goal string) EvaluationResult {
+	evalPrompt := fmt.Sprintf(`你作为公司的%s，需要根据公司整体业绩来评估自己的工作表现和模型配置是否合适。
+
+公司整体业绩/成果:
+%s
+
+公司目标:
+%s
+
+请从以下角度评估:
+1. 自己的工作是否对公司业绩有贡献?
+2. 当前使用的AI模型(%s)是否最适合当前任务?
+3. 是否需要更换模型来提升业绩?
+
+请直接返回以下格式(每行一个):
+分数(0-100):
+是否更换模型(yes/no):
+更换原因(一句话):
+推荐模型(如果是yes):
+`, role, companyPerformance, goal, currentModel)
+
+	response, err := s.callModel(ctx, currentModel, "你是一个追求业绩的领导者", evalPrompt)
+	if err != nil {
+		return EvaluationResult{shouldSwitch: false, newModel: currentModel, reason: "评估失败"}
+	}
+	
+	// 解析响应
+	result := EvaluationResult{
+		shouldSwitch: strings.Contains(response, "yes"),
+		newModel:     currentModel,
+		reason:       "保持当前模型",
+	}
+	
+	// 提取推荐模型
+	lines := strings.Split(response, "\n")
+	for _, line := range lines {
+		if strings.Contains(line, "推荐模型") || strings.Contains(line, "gpt-") || strings.Contains(line, "glm-") || strings.Contains(line, "claude") {
+			for _, m := range []string{"gpt-4", "glm-4", "claude-3-sonnet", "kimi"} {
+				if strings.Contains(line, m) {
+					result.newModel = m
+					break
+				}
+			}
+		}
+		if strings.Contains(line, "分数") {
+			fmt.Sscanf(line, "分数%d", &result.score)
+		}
+		if strings.Contains(line, "更换原因") {
+			result.reason = strings.Split(line, ":")[1]
 		}
 	}
+	
+	return result
+}
+
+// getCompanyPerformance 获取公司整体业绩
+func (s *Service) getCompanyPerformance() string {
+	// TODO: 从数据库获取公司实际业绩数据
+	// 这里返回模拟数据
+	return "本月完成产品上线3个，用户增长20%，收入增长15%"
 }
 
 // getWorkerPerformance 获取下属的工作表现数据
