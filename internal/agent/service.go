@@ -519,45 +519,142 @@ func (s *Service) StartPerformanceEvalScheduler(cfg PerformanceEvalConfig) {
 }
 
 // runCompanyPerformanceEval 从公司整体业绩出发进行绩效评估
-// 流程：评估公司业绩 → 反向追溯各层级贡献 → 调整模型配置
+// 流程：评估公司业绩 → 下属打分 → CEO调整模型 → Manager调整 → Worker调整
 func (s *Service) runCompanyPerformanceEval(cfg PerformanceEvalConfig) {
 	ctx := context.Background()
 	
 	// 1. 获取公司整体业绩
 	companyPerformance := s.getCompanyPerformance()
 	
-	// 2. 根据公司业绩，反向追溯各层级的贡献和表现
+	// 2. 下属对 CEO 的打分（Manager 和 Worker 分别评价 CEO）
+	ceoScoreFromManager := s.getSubordinateScore("CEO", "Manager")
+	ceoScoreFromWorker := s.getSubordinateScore("CEO", "Worker")
+	ceoAvgScore := (ceoScoreFromManager + ceoScoreFromWorker) / 2
+	
+	// 3. 获取 CEO 当前使用的模型
+	ceoModel := s.defaultModel
+	
 	fmt.Printf("\n========== 公司绩效评估 ==========\n")
 	fmt.Printf("公司整体业绩: %s\n", companyPerformance)
-	fmt.Printf("目标: %s\n\n", cfg.CompanyGoal)
+	fmt.Printf("目标: %s\n", cfg.CompanyGoal)
+	fmt.Printf("下属打分 - Manager: %d分, Worker: %d分, 平均: %d分\n\n", 
+		ceoScoreFromManager, ceoScoreFromWorker, ceoAvgScore)
 	
-	// 3. CEO 评估：基于公司业绩，决定是否调整战略/模型
-	ceoModel := s.defaultModel
-	ceoEvaluation := s.evaluateRolePerformance(ctx, "CEO", ceoModel, companyPerformance, cfg.CompanyGoal)
+	// 4. CEO 评估：基于公司业绩 + 下属打分，共同决定是否调整模型
+	ceoEvaluation := s.evaluateRoleWithSubordinateScore(ctx, ceoModel, companyPerformance, cfg.CompanyGoal, ceoAvgScore)
 	if ceoEvaluation.shouldSwitch {
 		ceoModel = ceoEvaluation.newModel
 		fmt.Printf("→ CEO 模型调整为: %s (原因: %s)\n", ceoModel, ceoEvaluation.reason)
+	} else {
+		fmt.Printf("→ CEO 模型保持: %s (业绩:%d分, 下属打分:%d分)\n", ceoModel, ceoEvaluation.score, ceoAvgScore)
 	}
 	
-	// 4. Manager 评估：CEO 基于公司业绩评估 Manager
+	// 5. Manager 评估：CEO 基于公司业绩评估 Manager
 	managerModel := s.defaultModel
 	managerEvaluation := s.evaluateRolePerformance(ctx, "Manager", managerModel, companyPerformance, cfg.CompanyGoal)
 	if managerEvaluation.shouldSwitch {
 		managerModel = managerEvaluation.newModel
 		fmt.Printf("→ Manager 模型调整为: %s (原因: %s)\n", managerModel, managerEvaluation.reason)
+	} else {
+		fmt.Printf("→ Manager 模型保持: %s (评分:%d分)\n", managerModel, managerEvaluation.score)
 	}
 	
-	// 5. Worker 评估：Manager 基于公司业绩评估 Worker
+	// 6. Worker 评估：Manager 基于公司业绩评估 Worker
 	workerModel := s.defaultModel
 	workerEvaluation := s.evaluateRolePerformance(ctx, "Worker", workerModel, companyPerformance, cfg.CompanyGoal)
 	if workerEvaluation.shouldSwitch {
 		workerModel = workerEvaluation.newModel
 		fmt.Printf("→ Worker 模型调整为: %s (原因: %s)\n", workerModel, workerEvaluation.reason)
+	} else {
+		fmt.Printf("→ Worker 模型保持: %s (评分:%d分)\n", workerModel, workerEvaluation.score)
 	}
 	
 	fmt.Printf("=====================================\n\n")
 	
 	// TODO: 保存评估结果到数据库
+}
+
+// getSubordinateScore 获取下属对领导的打分
+func (s *Service) getSubordinateScore(leader, subordinate string) int {
+	// TODO: 从数据库获取实际打分数据
+	// 这里返回模拟数据
+	scores := map[string]int{
+		"CEO_Manager": 75,  // Manager 给 CEO 打分
+		"CEO_Worker":  80,  // Worker 给 CEO 打分
+	}
+	key := fmt.Sprintf("%s_%s", leader, subordinate)
+	if score, ok := scores[key]; ok {
+		return score
+	}
+	return 70 // 默认分数
+}
+
+// evaluateRoleWithSubordinateScore 评估角色表现（结合业绩和下属打分）
+func (s *Service) evaluateRoleWithSubordinateScore(ctx context.Context, currentModel, companyPerformance, goal string, subordinateScore int) EvaluationResult {
+	evalPrompt := fmt.Sprintf(`你作为公司的CEO，需要根据两个因素来决定是否更换AI模型：
+
+因素1 - 公司整体业绩:
+%s
+
+因素2 - 下属对你的平均打分: %d/100分
+(Manager和Worker对你工作表现的评分)
+
+公司目标:
+%s
+
+当前使用的AI模型: %s
+
+评估规则：
+- 如果业绩不达标(<目标80%)，即使下属打分高，也需要考虑更换模型
+- 如果下属打分低(<70分)，即使业绩达标，也需要更换模型
+- 如果两者都差(业绩<60% 且 下属打分<60)，必须更换模型
+
+请直接返回以下格式:
+分数(0-100):
+是否更换模型(yes/no):
+更换原因(一句话):
+推荐模型:
+`, companyPerformance, subordinateScore, goal, currentModel)
+
+	response, err := s.callModel(ctx, currentModel, "你是一个追求业绩的CEO", evalPrompt)
+	if err != nil {
+		return EvaluationResult{shouldSwitch: false, newModel: currentModel, reason: "评估失败"}
+	}
+	
+	// 解析响应
+	result := EvaluationResult{
+		shouldSwitch: false,
+		newModel:     currentModel,
+		reason:       "保持当前模型",
+		score:        subordinateScore,
+	}
+	
+	lines := strings.Split(response, "\n")
+	for _, line := range lines {
+		if strings.Contains(line, "分数") {
+			fmt.Sscanf(line, "分数%d", &result.score)
+		}
+		if strings.Contains(line, "是") && strings.Contains(line, "换") {
+			result.shouldSwitch = true
+		}
+		if strings.Contains(line, "更换原因") && len(strings.Split(line, ":")) > 1 {
+			result.reason = strings.TrimSpace(strings.Split(line, ":")[1])
+		}
+		for _, m := range []string{"gpt-4", "glm-4", "claude-3", "kimi"} {
+			if strings.Contains(line, m) {
+				result.newModel = m
+				break
+			}
+		}
+	}
+	
+	// 强制规则：下属打分太低必须换
+	if subordinateScore < 60 {
+		result.shouldSwitch = true
+		result.reason = fmt.Sprintf("下属打分过低(%d分)", subordinateScore)
+	}
+	
+	return result
 }
 
 // EvaluationResult 评估结果
