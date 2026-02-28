@@ -19,7 +19,7 @@ CorpFlow is a **multi-agent collaboration platform** that enables you to:
 - Create and manage AI agents
 - Build visual workflows with drag-and-drop
 - Deploy across multiple channels (Feishu, WeChat, Telegram, Discord)
-- Use multiple AI models with intelligent voting
+- Multiple AI agents collaborate on complex tasks
 
 ---
 
@@ -38,17 +38,11 @@ CorpFlow is a **multi-agent collaboration platform** that enables you to:
 
 1. **🔀 Visual Flow Editor** - Unlike CLI tools, CorpFlow provides a visual drag-and-drop workflow builder that's easy to use
 
-2. **🗳️ Multi-Model Voting** - Unique feature! Let multiple AI models discuss and vote on the best answer
+2. **🤝 Multi-Agent Collaboration** - Multiple AI agents work together, each with specialized roles (CEO, Manager, Worker) to complete complex tasks
 
-3. **📱 Mobile-First** - Full mobile app support for iOS, Android, Windows, macOS
+3. **🔧 Built-in Tools** - Shell, Git, Code Review, Test Generation, Web Search, File operations
 
-4. **💬 Multi-Channel** - Deploy to Feishu, WeChat, Telegram, Discord simultaneously
-
-5. **🧠 Hierarchical Memory** - Supervisors can view subordinate work history and generate reports
-
-6. **🔧 Built-in Tools** - Shell, Git, Code Review, Test Generation, Web Search, File operations
-
-7. **⚡ Ready Templates** - 8+ pre-built workflows: Chat, Voting, Research, Customer Service, Code Review, Content Creator, Data Analyzer, News Summarizer
+7. **⚡ Ready Templates** - 8+ pre-built workflows: Chat, Research, Customer Service, Code Review, Content Creator, Data Analyzer, News Summarizer, Software Development
 
 ---
 
@@ -59,7 +53,7 @@ CorpFlow is a **multi-agent collaboration platform** that enables you to:
 | 🤖 **AI Agents** | Create custom AI agents with different models |
 | 🔀 **Flow Builder** | Visual workflow automation with drag-and-drop |
 | 💬 **Multi-Channel** | Feishu, WeChat, Telegram, Discord |
-| 🗳️ **Multi-Model Voting** | Multiple AI models discuss and vote |
+| 🤝 **Multi-Agent Collaboration** | Multiple AI agents collaborate on complex tasks |
 | 📱 **Mobile App** | iOS, Android, macOS, Windows, iPadOS |
 | 🔧 **Tool Marketplace** | Shell, Git, Code Review, Test Gen, Calculator |
 | 📋 **Execution Logs** | Step-by-step execution tracking |
