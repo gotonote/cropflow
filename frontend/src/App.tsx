@@ -37,13 +37,15 @@ function App() {
 // Quick Templates
 const templates = [
   { id: 'simple-chat', name: '💬 Simple Chat', desc: 'Basic AI conversation' },
-  { id: 'multi-agent', name: '🤝 Multi-Agent Collab', desc: 'CEO + Manager + Worker' },
-  { id: 'superpowers-dev', name: '⚡ Superpowers Dev', desc: 'Professional SDLC workflow' },
-  { id: 'research', name: '🔍 Research', desc: 'Search & analyze' },
+  { id: 'org-hierarchy', name: '🏢 Org Hierarchy', desc: 'CEO + Manager + Worker' },
+  { id: 'okr-management', name: '🎯 OKR Management', desc: 'Goal setting & tracking' },
+  { id: 'performance-review', name: '📊 Performance Review', desc: 'Periodic evaluation' },
+  { id: 'meeting-management', name: '📅 Meeting Management', desc: 'Schedule & summaries' },
+  { id: 'resource-allocation', name: '💰 Resource Allocation', desc: 'Budget & personnel' },
+  { id: 'decision-making', name: '🗳️ Decision Making', desc: 'Group voting' },
+  { id: 'incident-response', name: '🚨 Incident Response', desc: 'Handle emergencies' },
   { id: 'customer-service', name: '🎧 Customer Service', desc: 'AI support bot' },
-  { id: 'code-review', name: '📝 Code Review', desc: 'Automated review' },
-  { id: 'content', name: '✍️ Content', desc: 'Social media' },
-  { id: 'software-dev', name: '🛠️ Software Dev', desc: 'Full-stack development' },
+  { id: 'data-analyzer', name: '📈 Data Analyzer', desc: 'Data insights' },
 ]
 
 function HomePanel() {

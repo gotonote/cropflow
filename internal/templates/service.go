@@ -171,44 +171,138 @@ const NewsSummarizer = `{
   ]
 }`
 
-// Template: Superpowers-style Software Development Workflow
-// Based on Superpowers (obra/superpowers) - 65k stars
-// Workflow: Brainstorming → Planning → Subagent Dev → TDD → Code Review → Finish
-const SuperpowersDev = `{
-  "name": "Superpowers Development",
-  "description": "Professional SDLC: Brainstorm → Plan → TDD → Review → Finish",
+// Template: OKR Management - 目标管理
+const OKRManagement = `{
+  "name": "OKR Management",
+  "description": "Company goal setting, tracking and evaluation",
   "nodes": [
-    {"id": "1", "type": "trigger", "data": {"label": "需求输入"}},
-    {"id": "2", "type": "agent", "data": {"label": "Brainstorming", "role": "designer", "prompt": "通过提问澄清需求，展示设计方案"}},
-    {"id": "3", "type": "agent", "data": {"label": "Planning", "role": "planner", "prompt": "创建详细实现计划，分解为2-5分钟的任务"}},
-    {"id": "4", "type": "agent", "data": {"label": "Subagent Dev", "role": "developer", "prompt": "并行执行每个任务，两阶段审查"}},
-    {"id": "5", "type": "agent", "data": {"label": "TDD", "role": "tester", "prompt": "RED-GREEN-REFACTOR: 先写测试，再写代码"}},
-    {"id": "6", "type": "agent", "data": {"label": "Code Review", "role": "reviewer", "prompt": "按计划审查代码，报告问题"}},
-    {"id": "7", "type": "agent", "data": {"label": "Finish", "role": "manager", "prompt": "验证测试，合并/PR/清理"}},
-    {"id": "8", "type": "output", "data": {"label": "开发完成"}}
+    {"id": "1", "type": "trigger", "data": {"label": "输入目标"}},
+    {"id": "2", "type": "agent", "data": {"label": "CEO", "role": "ceo", "prompt": "制定公司级O(Objective)"}},
+    {"id": "3", "type": "agent", "data": {"label": "Manager", "role": "manager", "prompt": "分解O为KR(Key Results)"}},
+    {"id": "4", "type": "agent", "data": {"label": "Worker", "role": "worker", "prompt": "制定个人OKR"}},
+    {"id": "5", "type": "condition", "data": {"label": "审核"}},
+    {"id": "6", "type": "output", "data": {"label": "输出OKR"}}
   ],
   "edges": [
     {"id": "e1-2", "source": "1", "target": "2"},
     {"id": "e2-3", "source": "2", "target": "3"},
     {"id": "e3-4", "source": "3", "target": "4"},
     {"id": "e4-5", "source": "4", "target": "5"},
-    {"id": "e5-6", "source": "5", "target": "6"},
-    {"id": "e6-7", "source": "6", "target": "7"},
-    {"id": "e7-8", "source": "7", "target": "8"}
+    {"id": "e5-6", "source": "5", "target": "6"}
+  ]
+}`
+
+// Template: Performance Review - 绩效评估
+const PerformanceReview = `{
+  "name": "Performance Review",
+  "description": "Periodic company performance evaluation",
+  "nodes": [
+    {"id": "1", "type": "trigger", "data": {"label": "触发评估"}},
+    {"id": "2", "type": "agent", "data": {"label": "收集业绩", "role": "manager", "prompt": "收集各部门/个人业绩数据"}},
+    {"id": "3", "type": "agent", "data": {"label": "下属打分", "role": "worker", "prompt": "下属对领导打分"}},
+    {"id": "4", "type": "agent", "data": {"label": "CEO评估", "role": "ceo", "prompt": "基于业绩和下属打分评估"}},
+    {"id": "5", "type": "agent", "data": {"label": "模型调整", "role": "system", "prompt": "根据评估结果调整AI模型配置"}},
+    {"id": "6", "type": "output", "data": {"label": "输出评估报告"}}
+  ],
+  "edges": [
+    {"id": "e1-2", "source": "1", "target": "2"},
+    {"id": "e2-3", "source": "2", "target": "3"},
+    {"id": "e3-4", "source": "3", "target": "4"},
+    {"id": "e4-5", "source": "4", "target": "5"},
+    {"id": "e5-6", "source": "5", "target": "6"}
+  ]
+}`
+
+// Template: Meeting Management - 会议管理
+const MeetingManagement = `{
+  "name": "Meeting Management",
+  "description": "Schedule, conduct and summarize meetings",
+  "nodes": [
+    {"id": "1", "type": "trigger", "data": {"label": "会议需求"}},
+    {"id": "2", "type": "agent", "data": {"label": "安排议程", "role": "secretary", "prompt": "制定会议议程"}},
+    {"id": "3", "type": "agent", "data": {"label": "会议纪要", "role": "recorder", "prompt": "记录会议要点"}},
+    {"id": "4", "type": "agent", "data": {"label": "任务分配", "role": "manager", "prompt": "分配会议任务"}},
+    {"id": "5", "type": "output", "data": {"label": "输出会议报告"}}
+  ],
+  "edges": [
+    {"id": "e1-2", "source": "1", "target": "2"},
+    {"id": "e2-3", "source": "2", "target": "3"},
+    {"id": "e3-4", "source": "3", "target": "4"},
+    {"id": "e4-5", "source": "4", "target": "5"}
+  ]
+}`
+
+// Template: Resource Allocation - 资源分配
+const ResourceAllocation = `{
+  "name": "Resource Allocation",
+  "description": "Allocate budget, personnel and resources",
+  "nodes": [
+    {"id": "1", "type": "trigger", "data": {"label": "资源需求"}},
+    {"id": "2", "type": "agent", "data": {"label": "需求评估", "role": "manager", "prompt": "评估各部门需求"}},
+    {"id": "3", "type": "agent", "data": {"label": "CEO审批", "role": "ceo", "prompt": "审批资源分配方案"}},
+    {"id": "4", "type": "output", "data": {"label": "输出分配方案"}}
+  ],
+  "edges": [
+    {"id": "e1-2", "source": "1", "target": "2"},
+    {"id": "e2-3", "source": "2", "target": "3"},
+    {"id": "e3-4", "source": "3", "target": "4"}
+  ]
+}`
+
+// Template: Decision Making - 决策机制
+const DecisionMaking = `{
+  "name": "Decision Making",
+  "description": "Group decision process with voting",
+  "nodes": [
+    {"id": "1", "type": "trigger", "data": {"label": "决策议题"}},
+    {"id": "2", "type": "agent", "data": {"label": "方案提出", "role": "proposer", "prompt": "提出决策方案"}},
+    {"id": "3", "type": "agent", "data": {"label": "可行性分析", "role": "analyst", "prompt": "分析方案可行性"}},
+    {"id": "4", "type": "agent", "data": {"label": "投票表决", "role": "voter", "prompt": "多方投票决策"}},
+    {"id": "5", "type": "output", "data": {"label": "输出决策"}}
+  ],
+  "edges": [
+    {"id": "e1-2", "source": "1", "target": "2"},
+    {"id": "e2-3", "source": "2", "target": "3"},
+    {"id": "e3-4", "source": "3", "target": "4"},
+    {"id": "e4-5", "source": "4", "target": "5"}
+  ]
+}`
+
+// Template: Incident Response - 突发事件处理
+const IncidentResponse = `{
+  "name": "Incident Response",
+  "description": "Handle company emergencies and incidents",
+  "nodes": [
+    {"id": "1", "type": "trigger", "data": {"label": "突发事件"}},
+    {"id": "2", "type": "agent", "data": {"label": "评估影响", "role": "analyst", "prompt": "评估事件影响范围"}},
+    {"id": "3", "type": "agent", "data": {"label": "制定方案", "role": "manager", "prompt": "制定应对方案"}},
+    {"id": "4", "type": "agent", "data": {"label": "执行", "role": "worker", "prompt": "执行应急措施"}},
+    {"id": "5", "type": "agent", "data": {"label": "复盘", "role": "ceo", "prompt": "事后复盘总结"}},
+    {"id": "6", "type": "output", "data": {"label": "输出报告"}}
+  ],
+  "edges": [
+    {"id": "e1-2", "source": "1", "target": "2"},
+    {"id": "e2-3", "source": "2", "target": "3"},
+    {"id": "e3-4", "source": "3", "target": "4"},
+    {"id": "e4-5", "source": "4", "target": "5"},
+    {"id": "e5-6", "source": "5", "target": "6"}
   ]
 }`
 
 // All templates
 var AllTemplates = []Template{
   {"simple-chat", "Simple Chat", "Basic AI chat", SimpleChat},
-  {"multi-agent-collaboration", "Multi-Agent Collaboration", "CEO + Manager + Worker collaboration", MultiAgentCollaboration},
-  {"superpowers-dev", "Superpowers Dev", "Professional SDLC workflow (TDD, Code Review)", SuperpowersDev},
-  {"research-assistant", "Research Assistant", "Search & analyze", ResearchAssistant},
+  
+  // 公司治理机制
+  {"org-hierarchy", "Org Hierarchy", "CEO → Manager → Worker hierarchy", MultiAgentCollaboration},
+  {"okr-management", "OKR Management", "Goal setting & tracking", OKRManagement},
+  {"performance-review", "Performance Review", "Periodic performance evaluation", PerformanceReview},
+  {"meeting-management", "Meeting Management", "Schedule & summary meetings", MeetingManagement},
+  {"resource-allocation", "Resource Allocation", "Allocate resources to teams", ResourceAllocation},
+  {"decision-making", "Decision Making", "Group decision process", DecisionMaking},
+  {"incident-response", "Incident Response", "Handle company incidents", IncidentResponse},
   {"customer-service", "Customer Service", "AI support", CustomerService},
-  {"code-review", "Code Review", "Automated code review", CodeReview},
-  {"content-creator", "Content Creator", "Social media content", ContentCreator},
   {"data-analyzer", "Data Analyzer", "Data insights", DataAnalyzer},
-  {"news-summarizer", "News Summarizer", "Daily news", NewsSummarizer},
 }
 
 type Template struct {
