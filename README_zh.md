@@ -1,10 +1,7 @@
 # 🏢 CorpFlow — 多智能体协作平台
 
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: light)" srcset="docs/logo-light.png">
-    <img src="docs/logo.png" alt="CorpFlow" width="400">
-  </picture>
+  <img src="docs/logo.jpg" alt="CorpFlow" width="400">
 </p>
 
 <p align="center">
