@@ -120,6 +120,27 @@ vim .env
 docker-compose up -d
 ```
 
+### Backend (Go without Docker)
+
+```bash
+# Install Go 1.21+
+
+# Clone the repo
+git clone https://github.com/gotonote/corpflow.git
+cd corpflow
+
+# Copy configuration
+cp .env.example .env
+
+# Edit .env with your API keys
+vim .env
+
+# Start backend (requires PostgreSQL and Redis)
+go run cmd/server/main.go
+```
+
+> **Note**: Without Docker, you need to install and run PostgreSQL (port 5432) and Redis (port 6379) locally.
+
 ### Frontend (React)
 
 ```bash
