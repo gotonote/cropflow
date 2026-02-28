@@ -26,6 +26,31 @@ CorpFlow is a **multi-agent collaboration platform** that enables you to:
 
 ## Architecture
 
+## Architecture
+
+![Architecture Diagram](docs/architecture.svg)
+
+### Layer Description
+
+| Layer | Color | Components |
+|-------|-------|------------|
+| 🔵 **Input** | <span style="color:#3B82F6">**Blue**</span> | Mobile App, Web Frontend, Channels |
+| 🟡 **Gateway** | <span style="color:#F59E0B">**Yellow**</span> | API Gateway (Go Gin) |
+| 🟢 **Core** | <span style="color:#10B981">**Green**</span> | Agent, Flow, Channel, Tools, Logs, Memory, Template |
+| 🟣 **Model** | <span style="color:#8B5CF6">**Purple**</span> | OpenAI, Zhipu, Anthropic, Kimi, Qwen, DeepSeek, MiniMax |
+| 🔴 **Output** | <span style="color:#EF4444">**Red**</span> | Response, Logs, Export |
+| ⚫ **Data** | <span style="color:#6B7280">**Gray**</span> | PostgreSQL, Redis, File Store |
+
+### Data Flow
+
+```
+User → API Gateway → Core Services → AI Models → Response
+                    ↓
+               Data Layer
+```
+
+---
+
 ## Demo: Build Your AI Team
 
 ![Demo: Build AI Team](docs/demo.svg)
