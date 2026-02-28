@@ -131,6 +131,20 @@ vim .env
 docker-compose up -d
 ```
 
+### Frontend (React)
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Open http://localhost:3000
+```
+
 ### One-Click Install (Recommended)
 
 ```bash
@@ -145,20 +159,6 @@ cd corpflow && go run cmd/server/main.go
 
 # Start frontend (terminal 2)
 cd corpflow/frontend && npm run dev
-```
-
-### Frontend (React)
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Open http://localhost:3000
 ```
 
 ### Mobile App (Flutter)
