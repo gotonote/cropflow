@@ -1,19 +1,46 @@
-# CorpFlow
+# 🏢 CorpFlow — 多智能体协作平台
 
 <p align="center">
-  <img src="docs/logo.jpg" width="200" alt="CorpFlow Logo">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="docs/logo-light.png">
+    <img src="docs/logo.png" alt="CorpFlow" width="400">
+  </picture>
 </p>
 
-**多智能体协作平台**
+<p align="center">
+  <strong>AI 驱动的公司治理平台</strong>
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform](https://img.shields.io/badge/Platform-Flutter-blue.svg)](https://flutter.dev)
+<p align="center">
+  <a href="https://github.com/gotonote/corpflow/stargazers"><img src="https://img.shields.io/github/stars/gotonote/corpflow?style=for-the-badge" alt="Stars"></a>
+  <a href="https://github.com/gotonote/corpflow/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="License"></a>
+  <a href="https://discord.gg"><img src="https://img.shields.io/discord/123456789?label=Discord&logo=discord&style=for-the-badge" alt="Discord"></a>
+</p>
 
-> **English**: [README.md](./README.md)
+**CorpFlow** 是一个 *AI 驱动的公司治理平台*，支持：
+- 构建智能组织架构的 AI 智能体
+- 实现自动化绩效评估和模型动态切换
+- 多渠道部署（飞书、微信、Telegram、Discord）
+- 通过多智能体协作实现公司自治
+
+[官网](https://corpflow.io) · [文档](https://docs.corpflow.io) · [GitHub](https://github.com/gotonote/corpflow) · [English](./README.md)
 
 ---
 
-## 概述
+## 为什么选择 CorpFlow
+
+| 功能 | 说明 |
+|------|------|
+| 🤖 **AI 智能体** | CEO、Manager、Worker 分层智能体 |
+| 📊 **OKR 管理** | 目标设定与追踪 |
+| 📈 **绩效评估** | 自动化评估与模型切换 |
+| 🗳️ **决策机制** | 群体投票决策 |
+| 🚨 **突发事件处理** | 自动化应急响应 |
+| 💬 **多渠道** | 飞书、微信、Telegram、Discord |
+
+---
+
+## 快速开始
 
 CorpFlow 是一个**多智能体协作平台**，支持：
 - 创建和管理 AI 智能体

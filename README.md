@@ -1,30 +1,46 @@
-# CorpFlow
+# 🏢 CorpFlow — Multi-Agent Collaboration Platform
 
 <p align="center">
-  <img src="docs/logo.jpg" width="200" alt="CorpFlow Logo">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="docs/logo-light.png">
+    <img src="docs/logo.png" alt="CorpFlow" width="400">
+  </picture>
 </p>
 
-**Multi-Agent Collaboration Platform**
+<p align="center">
+  <strong>AI-Powered Company Governance Platform</strong>
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform](https://img.shields.io/badge/Platform-Flutter-blue.svg)](https://flutter.dev)
+<p align="center">
+  <a href="https://github.com/gotonote/corpflow/stargazers"><img src="https://img.shields.io/github/stars/gotonote/corpflow?style=for-the-badge" alt="Stars"></a>
+  <a href="https://github.com/gotonote/corpflow/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="License"></a>
+  <a href="https://discord.gg"><img src="https://img.shields.io/discord/123456789?label=Discord&logo=discord&style=for-the-badge" alt="Discord"></a>
+</p>
 
-> **中文**: [README_zh.md](./README_zh.md)
-
----
-
-## Overview
-
-CorpFlow is a **multi-agent collaboration platform** that enables you to:
-- Create and manage AI agents
-- Build visual workflows with drag-and-drop
+**CorpFlow** is an *AI-powered company governance platform* that enables you to:
+- Build intelligent organizational structures with AI agents
+- Implement automated performance evaluation and model switching
 - Deploy across multiple channels (Feishu, WeChat, Telegram, Discord)
-- Multiple AI agents collaborate on complex tasks
+- Achieve autonomous company management through multi-agent collaboration
+
+[Website](https://corpflow.io) · [Docs](https://docs.corpflow.io) · [GitHub](https://github.com/gotonote/corpflow) · [中文](./README_zh.md)
 
 ---
 
+## Why CorpFlow
 
-## Architecture
+| Feature | Description |
+|---------|-------------|
+| 🤖 **AI Agents** | CEO, Manager, Worker hierarchical agents |
+| 📊 **OKR Management** | Goal setting and tracking |
+| 📈 **Performance Review** | Automated evaluation with model switching |
+| 🗳️ **Decision Making** | Group decision with voting |
+| 🚨 **Incident Response** | Automated emergency handling |
+| 💬 **Multi-Channel** | Feishu, WeChat, Telegram, Discord |
+
+---
+
+## Quick Start
 
 ![Architecture Diagram](docs/architecture.svg)
 
