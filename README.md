@@ -103,6 +103,37 @@ User → API Gateway → Core Services → AI Models → Response
 
 ## Quick Start
 
+### Requirements
+
+| Component | Version | Description |
+|-----------|---------|-------------|
+| **Go** | 1.21+ | Backend runtime |
+| **Node.js** | 18+ | Frontend build |
+| **PostgreSQL** | 14+ | Database |
+| **Redis** | 7+ | Cache & sessions |
+| **Flutter** | 3.16+ | Mobile app (optional) |
+
+### Go Dependencies
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| gin | v1.9.1 | HTTP framework |
+| gorm | v1.25.5 | ORM |
+| gorm.io/driver/postgres | v1.5.4 | PostgreSQL driver |
+| go-redis/v9 | v9.3.0 | Redis client |
+| go-openai | v1.17.0 | OpenAI API |
+| chromedp | v0.9.5 | Browser automation |
+
+### Frontend Dependencies
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| react | ^18.2.0 | UI framework |
+| @xyflow/react | ^12.0.0 | Flow editor |
+| axios | ^1.6.0 | HTTP client |
+| vite | ^5.0.0 | Build tool |
+| typescript | ^5.3.0 | Type safety |
+
 ### Backend (Go + Docker)
 
 ```bash
