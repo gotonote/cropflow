@@ -172,6 +172,22 @@ go run cmd/server/main.go
 
 > **Note**: Without Docker, you need to install and run PostgreSQL (port 5432) and Redis (port 6379) locally.
 
+#### One-Click Install Script
+
+```bash
+# Run the install script
+curl -sSL https://raw.githubusercontent.com/gotonote/corpflow/main/scripts/install.sh | bash
+
+# After installation, edit .env with your API keys
+vim corpflow/.env
+
+# Start backend (terminal 1)
+cd corpflow && go run cmd/server/main.go
+
+# Start frontend (terminal 2)
+cd corpflow/frontend && npm run dev
+```
+
 ### Frontend (React)
 
 ```bash
